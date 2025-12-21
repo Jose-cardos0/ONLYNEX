@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../config/firebase";
 import {
   ArrowLeft,
   Send,
@@ -15,12 +17,13 @@ import {
   Play,
 } from "lucide-react";
 import { getModelById } from "../services/modelsService";
-import { getResponse } from "../data/chatResponses";
+import { sendMessageToAI } from "../services/chatService";
 
 export default function Chat() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [model, setModel] = useState(null);
+  const [user, setUser] = useState(null); // Usuário autenticado do Firebase
   const [username, setUsername] = useState("");
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
@@ -42,13 +45,28 @@ export default function Chat() {
     return videos[randomIndex].videoUrl;
   };
 
+  // Verifica autenticação do Firebase
   useEffect(() => {
-    const storedUser = localStorage.getItem("onlynex_user");
-    if (!storedUser) {
-      navigate("/");
-      return;
-    }
-    setUsername(storedUser);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        // Usa a parte antes do @ como nome de exibição, ou o displayName se disponível
+        const displayName =
+          currentUser.displayName ||
+          currentUser.email?.split("@")[0] ||
+          "Usuário";
+        setUsername(displayName);
+      } else {
+        // Se não estiver autenticado, redireciona para login
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!user) return; // Aguarda autenticação
 
     const loadModel = async () => {
       const modelData = await getModelById(id);
@@ -71,7 +89,7 @@ export default function Chat() {
           {
             id: 1,
             sender: "model",
-            text: `Oi ${storedUser}! 💕 Que bom te ver por aqui! Como posso te ajudar hoje?`,
+            text: `Oi ${username}! 💕 Que bom te ver por aqui! Como posso te ajudar hoje?`,
             time: new Date(),
           },
         ]);
@@ -79,7 +97,7 @@ export default function Chat() {
     };
 
     loadModel();
-  }, [id, navigate]);
+  }, [id, navigate, user, username]);
 
   // Quando um vídeo específico (botão) termina, volta para digitando
   const handleVideoEnded = () => {
@@ -131,14 +149,23 @@ export default function Chat() {
     setMessages((prev) => [...prev, userMessage]);
     setMessage("");
 
-    // Simula a modelo digitando
+    // Mostra que a modelo está digitando
     setIsTyping(true);
 
-    // Tempo de resposta variável para parecer mais natural
-    const responseTime = 1000 + Math.random() * 2000;
+    try {
+      // Chama o serviço de IA (webhook n8n ou fallback local)
+      const response = await sendMessageToAI({
+        modelId: model.id,
+        modelName: model.name,
+        message: userMessage.text,
+        userId: user?.email, // Email do Firebase Auth (identificador único)
+        userName: username,
+        history: messages.map((m) => ({
+          sender: m.sender,
+          text: m.text,
+        })),
+      });
 
-    setTimeout(() => {
-      const response = getResponse(userMessage.text);
       const modelMessage = {
         id: Date.now() + 1,
         sender: "model",
@@ -148,7 +175,19 @@ export default function Chat() {
 
       setIsTyping(false);
       setMessages((prev) => [...prev, modelMessage]);
-    }, responseTime);
+    } catch (error) {
+      console.error("Erro ao enviar mensagem:", error);
+      setIsTyping(false);
+      
+      // Mensagem de erro amigável
+      const errorMessage = {
+        id: Date.now() + 1,
+        sender: "model",
+        text: "Ops, tive um probleminha aqui! 😅 Tenta de novo, amor? 💕",
+        time: new Date(),
+      };
+      setMessages((prev) => [...prev, errorMessage]);
+    }
 
     inputRef.current?.focus();
   };

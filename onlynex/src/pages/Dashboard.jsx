@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "../config/firebase";
 import {
   Search,
   Crown,
@@ -16,6 +18,7 @@ import { getAllModels } from "../services/modelsService";
 import logo from "../assets/logo.png";
 
 export default function Dashboard() {
+  const [user, setUser] = useState(null);
   const [username, setUsername] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
@@ -23,14 +26,24 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
+  // Verifica autenticação do Firebase
   useEffect(() => {
-    const storedUser = localStorage.getItem("onlynex_user");
-    if (!storedUser) {
-      navigate("/");
-      return;
-    }
-    setUsername(storedUser);
-    loadModels();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
+        // Usa a parte antes do @ como nome de exibição
+        const displayName =
+          currentUser.displayName ||
+          currentUser.email?.split("@")[0] ||
+          "Usuário";
+        setUsername(displayName);
+        loadModels();
+      } else {
+        navigate("/");
+      }
+    });
+
+    return () => unsubscribe();
   }, [navigate]);
 
   const loadModels = async () => {
@@ -44,9 +57,15 @@ export default function Dashboard() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("onlynex_user");
-    navigate("/");
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      localStorage.removeItem("onlynex_user");
+      localStorage.removeItem("onlynex_user_email");
+      navigate("/");
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
   };
 
   const filteredModels = models.filter((model) => {

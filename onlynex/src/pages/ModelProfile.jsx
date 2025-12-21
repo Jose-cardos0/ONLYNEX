@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../config/firebase";
 import {
   ArrowLeft,
   Verified,
@@ -22,23 +24,27 @@ export default function ModelProfile() {
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
 
+  // Verifica autenticação do Firebase
   useEffect(() => {
-    const storedUser = localStorage.getItem("onlynex_user");
-    if (!storedUser) {
-      navigate("/");
-      return;
-    }
-
-    const loadModel = async () => {
-      const modelData = await getModelById(id);
-      if (!modelData) {
-        navigate("/dashboard");
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (!currentUser) {
+        navigate("/");
         return;
       }
-      setModel(modelData);
-    };
-    
-    loadModel();
+
+      const loadModel = async () => {
+        const modelData = await getModelById(id);
+        if (!modelData) {
+          navigate("/dashboard");
+          return;
+        }
+        setModel(modelData);
+      };
+
+      loadModel();
+    });
+
+    return () => unsubscribe();
   }, [id, navigate]);
 
   const formatNumber = (num) => {
