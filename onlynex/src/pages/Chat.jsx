@@ -12,8 +12,9 @@ import {
   Heart,
   Gift,
   Smile,
+  Play,
 } from "lucide-react";
-import { getModelById } from "../data/models";
+import { getModelById } from "../services/modelsService";
 import { getResponse } from "../data/chatResponses";
 
 export default function Chat() {
@@ -26,8 +27,20 @@ export default function Chat() {
   const [isTyping, setIsTyping] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isVideoOff, setIsVideoOff] = useState(false);
+  const [currentVideoUrl, setCurrentVideoUrl] = useState(null);
+  const [isDigitandoMode, setIsDigitandoMode] = useState(true); // true = vídeo digitando (loop), false = vídeo específico
+  const [activeButtonId, setActiveButtonId] = useState(null); // ID do botão ativo (para highlight)
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const videoRef = useRef(null);
+
+  // Obtém um vídeo digitando aleatório
+  const getRandomDigitandoVideo = (modelData) => {
+    const videos = modelData?.videosDigitando || [];
+    if (videos.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * videos.length);
+    return videos[randomIndex].videoUrl;
+  };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("onlynex_user");
@@ -37,25 +50,64 @@ export default function Chat() {
     }
     setUsername(storedUser);
 
-    const modelData = getModelById(id);
-    if (!modelData) {
-      navigate("/dashboard");
-      return;
-    }
-    setModel(modelData);
+    const loadModel = async () => {
+      const modelData = await getModelById(id);
+      if (!modelData) {
+        navigate("/dashboard");
+        return;
+      }
+      setModel(modelData);
 
-    // Mensagem de boas-vindas
-    setTimeout(() => {
-      setMessages([
-        {
-          id: 1,
-          sender: "model",
-          text: `Oi ${storedUser}! 💕 Que bom te ver por aqui! Como posso te ajudar hoje?`,
-          time: new Date(),
-        },
-      ]);
-    }, 1000);
+      // Inicia com um vídeo digitando aleatório
+      const randomVideo = getRandomDigitandoVideo(modelData);
+      if (randomVideo) {
+        setCurrentVideoUrl(randomVideo);
+        setIsDigitandoMode(true);
+      }
+
+      // Mensagem de boas-vindas
+      setTimeout(() => {
+        setMessages([
+          {
+            id: 1,
+            sender: "model",
+            text: `Oi ${storedUser}! 💕 Que bom te ver por aqui! Como posso te ajudar hoje?`,
+            time: new Date(),
+          },
+        ]);
+      }, 1000);
+    };
+
+    loadModel();
   }, [id, navigate]);
+
+  // Quando um vídeo específico (botão) termina, volta para digitando
+  const handleVideoEnded = () => {
+    if (!isDigitandoMode && model) {
+      // Vídeo do botão terminou, volta para digitando aleatório
+      const randomVideo = getRandomDigitandoVideo(model);
+      if (randomVideo) {
+        setCurrentVideoUrl(randomVideo);
+        setIsDigitandoMode(true);
+        setActiveButtonId(null);
+      }
+    }
+  };
+
+  // Troca para um vídeo específico (botão clicado)
+  const handleVideoButtonClick = (videoChat) => {
+    setCurrentVideoUrl(videoChat.videoUrl);
+    setIsDigitandoMode(false);
+    setActiveButtonId(videoChat.id);
+    
+    // Reinicia o vídeo
+    setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.load();
+        videoRef.current.play();
+      }
+    }, 50);
+  };
 
   useEffect(() => {
     scrollToBottom();
@@ -140,26 +192,66 @@ export default function Chat() {
               </div>
             </div>
           </div>
+
+          {/* Video Chat Buttons */}
+          {model.videosChat && model.videosChat.length > 0 && (
+            <div className="flex flex-wrap gap-2 mt-4">
+              {model.videosChat.map((videoChat) => (
+                <button
+                  key={videoChat.id}
+                  onClick={() => handleVideoButtonClick(videoChat)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                    activeButtonId === videoChat.id
+                      ? "bg-gradient-to-r from-sky-500 to-cyan-500 text-white shadow-lg shadow-sky-500/30"
+                      : "bg-white/10 text-white/80 hover:bg-white/20 hover:text-white"
+                  }`}
+                >
+                  <Play className="w-4 h-4" />
+                  {videoChat.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
-        {/* Video placeholder with model image */}
+        {/* Video Player or Fallback Image */}
         <div className="absolute inset-0 flex items-center justify-center">
-          <img
-            src={model.avatar}
-            alt={model.name}
-            className="w-full h-full object-cover opacity-50"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
+          {currentVideoUrl ? (
+            <>
+              {/* Video Player */}
+              <video
+                ref={videoRef}
+                src={currentVideoUrl}
+                className="w-full h-full object-cover"
+                autoPlay
+                loop={isDigitandoMode} // Loop apenas para vídeos digitando
+                muted={isMuted}
+                playsInline
+                onEnded={handleVideoEnded}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent pointer-events-none" />
+            </>
+          ) : (
+            <>
+              {/* Fallback - Model Image */}
+              <img
+                src={model.avatar}
+                alt={model.name}
+                className="w-full h-full object-cover opacity-50"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-transparent to-transparent" />
 
-          {/* Central video frame */}
-          <div className="absolute inset-8 sm:inset-12 lg:inset-16 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
-            <img
-              src={model.photos[0]}
-              alt={model.name}
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
-          </div>
+              {/* Central image frame when no video */}
+              <div className="absolute inset-8 sm:inset-12 lg:inset-16 rounded-2xl overflow-hidden border border-white/10 shadow-2xl">
+                <img
+                  src={model.photos?.[0] || model.avatar}
+                  alt={model.name}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              </div>
+            </>
+          )}
         </div>
 
         {/* Model info overlay */}

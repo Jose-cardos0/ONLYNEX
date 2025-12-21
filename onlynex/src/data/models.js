@@ -2,37 +2,49 @@
 export const models = [
   {
     id: 1,
-    name: "Isabella Santos",
+    name: "Isabelle Laurent",
     username: "@isabella",
     bio: "Modelo profissional | Rio de Janeiro 🌴",
-    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&fit=crop&crop=face",
-    cover: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=1200&h=400&fit=crop",
+    avatar: "https://i.ibb.co/pjKHsVmN/avatar.jpg",
+    cover: "https://i.ibb.co/s931bzMh/avatar-7.jpg",
     isOnline: true,
     isVerified: true,
     subscribers: 12500,
     posts: 234,
     likes: 89000,
     photos: [
-      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=600&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1488716820095-cbe80883c496?w=600&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1496440737103-cd596325d314?w=600&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&h=800&fit=crop",
-      "https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?w=600&h=800&fit=crop",
+      "https://i.ibb.co/gH1M7fy/avatar-2.jpg",
+      "https://i.ibb.co/60LQWytf/avatar-3.jpg",
+      "https://i.ibb.co/ZD7M4Rv/avatar-4.jpg",
+      "https://i.ibb.co/nNsBTn5M/avatar-5.jpg",
+      "https://i.ibb.co/TDp6TPjv/avatar-6.jpg",
+      "https://i.ibb.co/F4NtQRPq/avatar-1.jpg",
     ],
     videos: [
-      { thumbnail: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&h=300&fit=crop", duration: "2:34" },
-      { thumbnail: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=300&fit=crop", duration: "5:12" },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&h=300&fit=crop",
+        duration: "2:34",
+        videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+      },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=300&fit=crop",
+        duration: "5:12",
+        videoUrl: "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+      },
     ],
-    price: 29.90,
+    price: 0.0,
   },
   {
     id: 2,
     name: "Camila Oliveira",
     username: "@camila.oli",
     bio: "Fitness & Lifestyle | São Paulo 💪",
-    avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=400&fit=crop&crop=face",
-    cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=400&fit=crop",
+    avatar:
+      "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=400&h=400&fit=crop&crop=face",
+    cover:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1200&h=400&fit=crop",
     isOnline: true,
     isVerified: true,
     subscribers: 8900,
@@ -45,17 +57,24 @@ export const models = [
       "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=600&h=800&fit=crop",
     ],
     videos: [
-      { thumbnail: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop", duration: "3:45" },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop",
+        duration: "3:45",
+        videoUrl: "https://www.youtube.com/watch?v=9bZkp7q19f0",
+      },
     ],
-    price: 24.90,
+    price: 24.9,
   },
   {
     id: 3,
     name: "Juliana Costa",
     username: "@ju.costa",
     bio: "Dançarina | Conteúdo exclusivo 💃",
-    avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face",
-    cover: "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1200&h=400&fit=crop",
+    avatar:
+      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop&crop=face",
+    cover:
+      "https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1200&h=400&fit=crop",
     isOnline: false,
     isVerified: true,
     subscribers: 15200,
@@ -69,19 +88,36 @@ export const models = [
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=600&h=800&fit=crop",
     ],
     videos: [
-      { thumbnail: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=300&fit=crop", duration: "4:20" },
-      { thumbnail: "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&h=300&fit=crop", duration: "6:15" },
-      { thumbnail: "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&h=300&fit=crop", duration: "2:50" },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=400&h=300&fit=crop",
+        duration: "4:20",
+        videoUrl: "https://www.youtube.com/watch?v=kJQP7kiw5Fk",
+      },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=400&h=300&fit=crop",
+        duration: "6:15",
+        videoUrl: "https://www.youtube.com/watch?v=fJ9rUzIMcZQ",
+      },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=400&h=300&fit=crop",
+        duration: "2:50",
+        videoUrl: "https://www.youtube.com/watch?v=OPf0YbXqDm0",
+      },
     ],
-    price: 34.90,
+    price: 34.9,
   },
   {
     id: 4,
     name: "Fernanda Lima",
     username: "@ferlima",
     bio: "Atriz & Modelo | Curitiba 🎭",
-    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
-    cover: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&h=400&fit=crop",
+    avatar:
+      "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop&crop=face",
+    cover:
+      "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=1200&h=400&fit=crop",
     isOnline: true,
     isVerified: false,
     subscribers: 5600,
@@ -93,17 +129,24 @@ export const models = [
       "https://images.unsplash.com/photo-1496440737103-cd596325d314?w=600&h=800&fit=crop",
     ],
     videos: [
-      { thumbnail: "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=400&h=300&fit=crop", duration: "1:45" },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?w=400&h=300&fit=crop",
+        duration: "1:45",
+        videoUrl: "https://www.youtube.com/watch?v=L_jWHffIx5E",
+      },
     ],
-    price: 19.90,
+    price: 19.9,
   },
   {
     id: 5,
     name: "Beatriz Almeida",
     username: "@biabeauty",
     bio: "Influencer | Conteúdo diário 💖",
-    avatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
-    cover: "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&h=400&fit=crop",
+    avatar:
+      "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop&crop=face",
+    cover:
+      "https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1200&h=400&fit=crop",
     isOnline: true,
     isVerified: true,
     subscribers: 22000,
@@ -118,18 +161,30 @@ export const models = [
       "https://images.unsplash.com/photo-1507591064344-4c6ce005b128?w=600&h=800&fit=crop",
     ],
     videos: [
-      { thumbnail: "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop", duration: "8:30" },
-      { thumbnail: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=300&fit=crop", duration: "4:15" },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=400&h=300&fit=crop",
+        duration: "8:30",
+        videoUrl: "https://www.youtube.com/watch?v=ZbZSe6N_BXs",
+      },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=400&h=300&fit=crop",
+        duration: "4:15",
+        videoUrl: "https://www.youtube.com/watch?v=ScMzIvxBSi4",
+      },
     ],
-    price: 39.90,
+    price: 39.9,
   },
   {
     id: 6,
     name: "Amanda Souza",
     username: "@amandasouza",
     bio: "Modelo Plus Size | Body Positive 💕",
-    avatar: "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=400&fit=crop&crop=face",
-    cover: "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=1200&h=400&fit=crop",
+    avatar:
+      "https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=400&h=400&fit=crop&crop=face",
+    cover:
+      "https://images.unsplash.com/photo-1433086966358-54859d0ed716?w=1200&h=400&fit=crop",
     isOnline: false,
     isVerified: true,
     subscribers: 9800,
@@ -142,13 +197,17 @@ export const models = [
       "https://images.unsplash.com/photo-1496440737103-cd596325d314?w=600&h=800&fit=crop",
     ],
     videos: [
-      { thumbnail: "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&h=300&fit=crop", duration: "5:00" },
+      {
+        thumbnail:
+          "https://images.unsplash.com/photo-1552374196-1ab2a1c593e8?w=400&h=300&fit=crop",
+        duration: "5:00",
+        videoUrl: "https://www.youtube.com/watch?v=LXb3EKWsInQ",
+      },
     ],
-    price: 27.90,
+    price: 27.9,
   },
 ];
 
 export const getModelById = (id) => {
   return models.find((model) => model.id === parseInt(id));
 };
-

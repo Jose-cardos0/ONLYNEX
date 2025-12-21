@@ -12,7 +12,7 @@ import {
   Lock,
   X,
 } from "lucide-react";
-import { getModelById } from "../data/models";
+import { getModelById } from "../services/modelsService";
 
 export default function ModelProfile() {
   const { id } = useParams();
@@ -29,12 +29,16 @@ export default function ModelProfile() {
       return;
     }
 
-    const modelData = getModelById(id);
-    if (!modelData) {
-      navigate("/dashboard");
-      return;
-    }
-    setModel(modelData);
+    const loadModel = async () => {
+      const modelData = await getModelById(id);
+      if (!modelData) {
+        navigate("/dashboard");
+        return;
+      }
+      setModel(modelData);
+    };
+    
+    loadModel();
   }, [id, navigate]);
 
   const formatNumber = (num) => {
@@ -42,6 +46,23 @@ export default function ModelProfile() {
       return (num / 1000).toFixed(1) + "k";
     }
     return num;
+  };
+
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    // Extrai o ID do vídeo do YouTube
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = url.match(regExp);
+    const videoId = match && match[2].length === 11 ? match[2] : null;
+    if (videoId) {
+      return `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    }
+    return null;
+  };
+
+  const isYouTubeUrl = (url) => {
+    if (!url) return false;
+    return url.includes("youtube.com") || url.includes("youtu.be");
   };
 
   if (!model) {
@@ -136,7 +157,7 @@ export default function ModelProfile() {
               <div className="flex gap-3">
                 <button className="flex-1 sm:flex-none px-6 py-3 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/25 transition-all flex items-center justify-center gap-2">
                   <Crown className="w-5 h-5" />
-                  <span>Assinar R$ {model.price.toFixed(2)}/mês</span>
+                  <span>Assinar R$ {(model.price || 0).toFixed(2)}/mês</span>
                 </button>
               </div>
             </div>
@@ -171,8 +192,8 @@ export default function ModelProfile() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-1">
             {[
-              { id: "photos", label: "Fotos", icon: Image, count: model.photos.length },
-              { id: "videos", label: "Vídeos", icon: Play, count: model.videos.length },
+              { id: "photos", label: "Fotos", icon: Image, count: model.photos?.length || 0 },
+              { id: "videos", label: "Vídeos", icon: Play, count: model.videos?.length || 0 },
             ].map((tab) => (
               <button
                 key={tab.id}
@@ -202,7 +223,7 @@ export default function ModelProfile() {
         {/* Photos Grid */}
         {activeTab === "photos" && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
-            {model.photos.map((photo, index) => (
+            {(model.photos || []).map((photo, index) => (
               <div
                 key={index}
                 onClick={() => setSelectedMedia({ type: "photo", src: photo })}
@@ -232,9 +253,14 @@ export default function ModelProfile() {
         {/* Videos Grid */}
         {activeTab === "videos" && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {model.videos.map((video, index) => (
+            {(model.videos || []).map((video, index) => (
               <div
                 key={index}
+                onClick={() => {
+                  if (index === 0 && video.videoUrl) {
+                    setSelectedMedia({ type: "video", src: video.videoUrl });
+                  }
+                }}
                 className="relative aspect-video rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group"
               >
                 <img
@@ -282,17 +308,44 @@ export default function ModelProfile() {
           onClick={() => setSelectedMedia(null)}
         >
           <button
-            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white transition-colors"
+            className="absolute top-4 right-4 p-2 text-white/80 hover:text-white transition-colors z-10"
             onClick={() => setSelectedMedia(null)}
           >
             <X className="w-8 h-8" />
           </button>
-          <img
-            src={selectedMedia.src}
-            alt=""
-            className="max-w-full max-h-full object-contain rounded-lg"
-            onClick={(e) => e.stopPropagation()}
-          />
+          {selectedMedia.type === "photo" ? (
+            <img
+              src={selectedMedia.src}
+              alt=""
+              className="max-w-full max-h-full object-contain rounded-lg"
+              onClick={(e) => e.stopPropagation()}
+            />
+          ) : selectedMedia.type === "video" ? (
+            <div
+              className="w-full max-w-5xl aspect-video rounded-lg overflow-hidden bg-black"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {isYouTubeUrl(selectedMedia.src) ? (
+                <iframe
+                  src={getYouTubeEmbedUrl(selectedMedia.src)}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="YouTube video player"
+                />
+              ) : (
+                <video
+                  src={selectedMedia.src}
+                  className="w-full h-full"
+                  controls
+                  autoPlay
+                  playsInline
+                >
+                  Seu navegador não suporta reprodução de vídeo.
+                </video>
+              )}
+            </div>
+          ) : null}
         </div>
       )}
     </div>

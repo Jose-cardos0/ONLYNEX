@@ -10,14 +10,17 @@ import {
   TrendingUp,
   Flame,
   Grid3X3,
+  Loader2,
 } from "lucide-react";
-import { models } from "../data/models";
+import { getAllModels } from "../services/modelsService";
 import logo from "../assets/logo.png";
 
 export default function Dashboard() {
   const [username, setUsername] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [activeFilter, setActiveFilter] = useState("all");
+  const [models, setModels] = useState([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,7 +30,19 @@ export default function Dashboard() {
       return;
     }
     setUsername(storedUser);
+    loadModels();
   }, [navigate]);
+
+  const loadModels = async () => {
+    try {
+      const data = await getAllModels();
+      setModels(data);
+    } catch (error) {
+      console.error("Erro ao carregar modelos:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleLogout = () => {
     localStorage.removeItem("onlynex_user");
@@ -36,8 +51,8 @@ export default function Dashboard() {
 
   const filteredModels = models.filter((model) => {
     const matchesSearch =
-      model.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      model.username.toLowerCase().includes(searchTerm.toLowerCase());
+      model.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      model.username?.toLowerCase().includes(searchTerm.toLowerCase());
 
     if (activeFilter === "online") {
       return matchesSearch && model.isOnline;
@@ -154,7 +169,15 @@ export default function Dashboard() {
           ))}
         </div>
 
+        {/* Loading State */}
+        {loading && (
+          <div className="flex justify-center py-16">
+            <Loader2 className="w-10 h-10 text-sky-500 animate-spin" />
+          </div>
+        )}
+
         {/* Models Grid */}
+        {!loading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 stagger-children">
           {filteredModels.map((model) => (
             <Link
@@ -184,7 +207,7 @@ export default function Dashboard() {
                 {/* Price Badge */}
                 <div className="absolute bottom-3 right-3 px-3 py-1 bg-white/90 backdrop-blur rounded-full">
                   <span className="text-sky-600 font-bold text-sm">
-                    R$ {model.price.toFixed(2)}
+                    R$ {(model.price || 0).toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -225,17 +248,17 @@ export default function Dashboard() {
                   <div className="flex items-center gap-1.5 text-slate-500">
                     <Crown className="w-4 h-4 text-amber-500" />
                     <span className="font-medium">
-                      {formatNumber(model.subscribers)}
+                      {formatNumber(model.subscribers || 0)}
                     </span>
                   </div>
                   <div className="flex items-center gap-1.5 text-slate-500">
                     <Image className="w-4 h-4 text-sky-500" />
-                    <span className="font-medium">{model.posts}</span>
+                    <span className="font-medium">{model.posts || 0}</span>
                   </div>
                   <div className="flex items-center gap-1.5 text-slate-500">
                     <Heart className="w-4 h-4 text-rose-500" />
                     <span className="font-medium">
-                      {formatNumber(model.likes)}
+                      {formatNumber(model.likes || 0)}
                     </span>
                   </div>
                 </div>
@@ -243,6 +266,7 @@ export default function Dashboard() {
             </Link>
           ))}
         </div>
+        )}
 
         {/* Empty State */}
         {filteredModels.length === 0 && (

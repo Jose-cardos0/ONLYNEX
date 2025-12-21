@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { User, ArrowRight, Sparkles } from "lucide-react";
+import { useNavigate, Link } from "react-router-dom";
+import { User, ArrowRight, Sparkles, Shield } from "lucide-react";
 import logo from "../assets/logo.png";
 
 export default function Login() {
@@ -109,6 +109,16 @@ export default function Login() {
           <p className="text-center text-sm text-slate-400 mt-6">
             +18 anos • Conteúdo adulto
           </p>
+
+          {/* Link Admin - discreto */}
+          <Link
+            to="/admin"
+            className="fixed bottom-4 right-4 p-2 text-slate-300 hover:text-sky-500 transition-colors opacity-50 hover:opacity-100"
+            title="Painel Admin"
+          >
+            Login Admin
+            <Shield className="w-5 h-5" />
+          </Link>
         </div>
       </div>
     </div>

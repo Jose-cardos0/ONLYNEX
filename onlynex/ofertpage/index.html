@@ -1,0 +1,1363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OnlyNex - Acesso Premium | USD 29/mês</title>
+    <meta
+      name="description"
+      content="Acesse conteúdo exclusivo premium no OnlyNex. Assinatura mensal por apenas USD 29. Cancele a qualquer momento."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <!-- AOS Animation -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet" />
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+      /* Marquee Styles - Redesigned */
+      .marquee-container {
+        width: 100%;
+        overflow: hidden;
+        position: relative;
+        margin: 40px 0;
+        height: 120px;
+        display: flex;
+        align-items: center;
+        transform: rotate(-2deg);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+        animation-play-state: running;
+      }
+
+      .marquee-container::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(45deg, #ff006e, #8338ec, #3a86ff);
+        background-size: 400% 400%;
+        animation: gradientShift 4s ease infinite;
+        animation-delay: 0s;
+        z-index: 1;
+      }
+
+      .marquee-container::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: shine 3s infinite;
+        animation-delay: 0s;
+        z-index: 3;
+      }
+
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      @keyframes shine {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      .marquee {
+        color: white;
+        font-weight: 800;
+        font-size: 32px;
+        white-space: nowrap;
+        position: relative;
+        z-index: 2;
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+        letter-spacing: 3px;
+        display: flex;
+        animation: scroll-left 240s linear infinite;
+        animation-delay: 0s;
+        transform: translateX(0%);
+      }
+
+      .marquee.fast {
+        animation: scroll-left 160s linear infinite;
+        animation-delay: 0s;
+      }
+
+      .marquee.slow {
+        animation: scroll-left 200s linear infinite;
+        animation-delay: 0s;
+      }
+
+      .marquee.ultra-slow {
+        animation: scroll-left 280s linear infinite;
+        animation-delay: 0s;
+      }
+
+      @keyframes scroll-left {
+        0% {
+          transform: translateX(0%);
+        }
+        100% {
+          transform: translateX(-100%);
+        }
+      }
+
+      .marquee-text {
+        display: inline-block;
+        padding-right: 0;
+        animation-fill-mode: both;
+      }
+
+      /* Alternative Marquee Styles */
+      .marquee-container.style-2 {
+        background: linear-gradient(45deg, #ff6b6b, #ee5a24, #ff9f43, #feca57);
+        transform: rotate(1.5deg);
+        height: 140px;
+      }
+
+      .marquee-container.style-3 {
+        background: linear-gradient(45deg, #5f27cd, #341f97, #2e86de, #54a0ff);
+        transform: rotate(-1deg);
+        height: 130px;
+      }
+
+      .marquee-container.style-4 {
+        background: linear-gradient(45deg, #00d2d3, #ff9ff3, #54a0ff, #5f27cd);
+        transform: rotate(2deg);
+        height: 150px;
+      }
+
+      .marquee-container.style-2 .marquee {
+        font-size: 34px;
+      }
+
+      .marquee-container.style-3 .marquee {
+        font-size: 30px;
+      }
+
+      .marquee-container.style-4 .marquee {
+        font-size: 36px;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Outfit", system-ui, sans-serif;
+        background: #000;
+        color: #fff;
+        overflow-x: hidden;
+      }
+
+      /* OnlyNex Blue/Sky Gradient */
+      .gradient-primary {
+        background: linear-gradient(
+          135deg,
+          #0ea5e9 0%,
+          #0284c7 50%,
+          #0369a1 100%
+        );
+      }
+
+      .gradient-primary-text {
+        background: linear-gradient(
+          135deg,
+          #0ea5e9 0%,
+          #0284c7 50%,
+          #0369a1 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* Particles Container */
+      #particles-js {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 0;
+        background: #000;
+      }
+
+      /* Content above particles */
+      .content-over-particles {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Glow Effects */
+      .glow-primary {
+        box-shadow: 0 0 30px rgba(14, 165, 233, 0.5),
+          0 0 60px rgba(14, 165, 233, 0.3), 0 0 90px rgba(14, 165, 233, 0.2);
+        animation: pulseGlow 2s ease-in-out infinite;
+      }
+
+      @keyframes pulseGlow {
+        0%,
+        100% {
+          box-shadow: 0 0 30px rgba(14, 165, 233, 0.5),
+            0 0 60px rgba(14, 165, 233, 0.3), 0 0 90px rgba(14, 165, 233, 0.2);
+        }
+        50% {
+          box-shadow: 0 0 50px rgba(14, 165, 233, 0.8),
+            0 0 100px rgba(14, 165, 233, 0.5), 0 0 150px rgba(14, 165, 233, 0.3);
+        }
+      }
+
+      /* Urgency Pulse */
+      @keyframes urgencyPulse {
+        0%,
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        50% {
+          transform: scale(1.05);
+          opacity: 0.9;
+        }
+      }
+
+      .urgency-pulse {
+        animation: urgencyPulse 2s ease-in-out infinite;
+      }
+
+      /* Image Grid Hover */
+      .model-card {
+        position: relative;
+        overflow: hidden;
+        border-radius: 12px;
+        transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      .model-card img {
+        transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      }
+
+      .model-card:hover img {
+        transform: scale(1.1);
+      }
+
+      .model-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(
+          to bottom,
+          transparent 0%,
+          rgba(14, 165, 233, 0.3) 100%
+        );
+        opacity: 0;
+        transition: opacity 0.4s ease;
+        z-index: 1;
+      }
+
+      .model-card:hover::before {
+        opacity: 1;
+      }
+
+      /* Video Container */
+      .video-container {
+        position: relative;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(14, 165, 233, 0.4);
+      }
+
+      .video-container video {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* Button Styles */
+      .btn-primary {
+        background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+        padding: 18px 48px;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 18px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .btn-primary::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+      }
+
+      .btn-primary:hover::before {
+        width: 300px;
+        height: 300px;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 40px rgba(14, 165, 233, 0.6);
+      }
+
+      .btn-primary span {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* Price Highlight */
+      .price-box {
+        /* background: linear-gradient(135deg, #10b98109 0%, #057996 100%); */
+        padding: 24px;
+        border-radius: 16px;
+        text-align: center;
+        /* box-shadow: 0 10px 40px rgba(16, 185, 129, 0.4); */
+      }
+
+      /* Feature Card */
+      .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(14, 165, 233, 0.3);
+        border-radius: 16px;
+        padding: 32px;
+        transition: all 0.4s ease;
+      }
+
+      .feature-card:hover {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(14, 165, 233, 0.6);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 60px rgba(14, 165, 233, 0.3);
+      }
+
+      /* Urgency Banner */
+      .urgency-banner {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+        padding: 16px;
+        text-align: center;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        animation: urgencyPulse 2s ease-in-out infinite;
+      }
+
+      /* Neon Text */
+      .neon-text {
+        text-shadow: 0 0 10px rgba(14, 165, 233, 0.8),
+          0 0 20px rgba(14, 165, 233, 0.6), 0 0 30px rgba(14, 165, 233, 0.4);
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 12px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: #000;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(135deg, #0ea5e9, #0284c7);
+        border-radius: 6px;
+      }
+
+      /* Floating Animation */
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0px);
+        }
+        50% {
+          transform: translateY(-20px);
+        }
+      }
+
+      /* Bounce Animation */
+      @keyframes bounce {
+        0%,
+        100% {
+          transform: translateY(0);
+          animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+        }
+        50% {
+          transform: translateY(-25%);
+          animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+        }
+      }
+
+      .float {
+        animation: float 6s ease-in-out infinite;
+      }
+
+      /* Shimmer Effect */
+      .shimmer {
+        position: relative;
+        overflow: hidden;
+      }
+
+      .shimmer::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(255, 255, 255, 0.3),
+          transparent
+        );
+        animation: shimmer 3s infinite;
+      }
+
+      @keyframes shimmer {
+        0% {
+          left: -100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      /* Grid Layout */
+      .model-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+      }
+
+      @media (min-width: 768px) {
+        .model-grid {
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        }
+      }
+
+      /* Video Grid */
+      .video-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+      }
+
+      /* Section Spacing */
+      section {
+        padding: 80px 20px;
+      }
+
+      @media (min-width: 768px) {
+        section {
+          padding: 120px 40px;
+        }
+      }
+    </style>
+  </head>
+  <body style="background: #000">
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <div class="content-over-particles">
+      <!-- Marquee 1 -->
+      <div class="marquee-container marquer1">
+        <div class="marquee fast">
+          <span class="marquee-text"
+            >🚀 ONLYNEX • PLATAFORMA PREMIUM • CONTEÚDO EXCLUSIVO • MODELOS
+            VERIFICADAS • ACESSO IMEDIATO • USD 29/MÊS • CANCELE QUANDO QUISER •
+            SEM COMPROMISSO • COMUNIDADE EXCLUSIVA • CRIADORAS PREMIUM • CHAT EM
+            TEMPO REAL • GALERIA DE FOTOS • VÍDEOS EXCLUSIVOS • PERFIS
+            VERIFICADOS • STATUS ONLINE • DASHBOARD PERSONALIZADO • PRIVACIDADE
+            GARANTIDA • SEGURANÇA TOTAL • ATUALIZAÇÃO DIÁRIA • CONTEÚDO PREMIUM
+            • EXPERIÊNCIA ÚNICA • 🚀 ONLYNEX • PLATAFORMA PREMIUM • CONTEÚDO
+            EXCLUSIVO • MODELOS VERIFICADAS • ACESSO IMEDIATO • USD 29/MÊS •
+            CANCELE QUANDO QUISER • SEM COMPROMISSO • COMUNIDADE EXCLUSIVA •
+            CRIADORAS PREMIUM • CHAT EM TEMPO REAL • GALERIA DE FOTOS • VÍDEOS
+            EXCLUSIVOS • PERFIS VERIFICADOS • STATUS ONLINE • DASHBOARD
+            PERSONALIZADO • PRIVACIDADE GARANTIDA • SEGURANÇA TOTAL •
+            ATUALIZAÇÃO DIÁRIA • CONTEÚDO PREMIUM • EXPERIÊNCIA ÚNICA • 🚀
+            ONLYNEX • PLATAFORMA PREMIUM • CONTEÚDO EXCLUSIVO • MODELOS
+            VERIFICADAS • ACESSO IMEDIATO • USD 29/MÊS • CANCELE QUANDO QUISER •
+            SEM COMPROMISSO • COMUNIDADE EXCLUSIVA • CRIADORAS PREMIUM • CHAT EM
+            TEMPO REAL • GALERIA DE FOTOS • VÍDEOS EXCLUSIVOS • PERFIS
+            VERIFICADOS • STATUS ONLINE • DASHBOARD PERSONALIZADO • PRIVACIDADE
+            GARANTIDA • SEGURANÇA TOTAL • ATUALIZAÇÃO DIÁRIA • CONTEÚDO PREMIUM
+            • EXPERIÊNCIA ÚNICA •</span
+          >
+        </div>
+      </div>
+
+      <!-- Hero Section -->
+      <section class="relative" style="overflow: visible">
+        <div class="max-w-7xl mx-auto">
+          <div
+            class="text-center mb-16 py-20 md:py-32"
+            data-aos="fade-up"
+            style="overflow: visible"
+          >
+            <div class="relative inline-block" style="overflow: visible">
+              <!-- Background grande com modeloLogo -->
+              <div
+                class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-20 md:opacity-30 pointer-events-none z-0"
+              >
+                <img
+                  src="modeloLogo.png"
+                  alt=""
+                  class="object-contain"
+                  style="
+                    width: 1000px;
+                    height: 1000px;
+                    max-width: 1000px;
+                    max-height: 1000px;
+                  "
+                />
+              </div>
+              <!-- Logo principal na frente -->
+              <img
+                src="logo.png"
+                alt="OnlyNex"
+                class="w-48 md:w-64 relative z-10 mx-auto mb-8 float"
+              />
+            </div>
+            <h1
+              class="text-5xl md:text-7xl font-black mb-6 gradient-primary-text"
+              style="font-family: 'Poppins', sans-serif"
+            >
+              A PLATAFORMA PREMIUM DE CONTEÚDO EXCLUSIVO
+            </h1>
+            <p
+              class="text-2xl md:text-3xl text-gray-300 mb-8 max-w-4xl mx-auto"
+            >
+              Conecte-se com criadoras verificadas e acesse conteúdo exclusivo
+              <span class="gradient-primary-text font-bold">premium</span> em
+              uma experiência única e segura
+            </p>
+          </div>
+
+          <!-- Price CTA -->
+          <div
+            class="max-w-2xl mx-auto text-center mb-16"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="mb-8">
+              <div class="relative z-50">
+                <div class="text-4xl md:text-6xl font-black mb-4">
+                  USD <span class="text-6xl md:text-8xl">29</span>/mês
+                </div>
+                <p
+                  class="text-xl text-white/90 mb-6 flex items-center justify-center gap-2"
+                >
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                  Cancele a qualquer momento • Sem compromisso • Acesso completo
+                </p>
+                <button class="btn-primary animate-bounce">
+                  <span class="flex items-center justify-center gap-2">
+                    <i data-lucide="rocket" class="w-5 h-5"></i>
+                    COMEÇAR AGORA
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- What is OnlyNex Section -->
+      <section class="bg-black/50">
+        <div class="max-w-7xl mx-auto">
+          <div class="grid md:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+              <h2
+                class="text-4xl md:text-6xl font-black mb-6 gradient-primary-text"
+                style="font-family: 'Poppins', sans-serif"
+              >
+                O QUE É O ONLYNEX?
+              </h2>
+              <p class="text-xl text-gray-300 mb-6 leading-relaxed">
+                O OnlyNex é a plataforma premium que conecta você a conteúdo
+                exclusivo de modelos verificadas, criadoras e influenciadoras.
+                Uma experiência única de interação e acesso a material exclusivo
+                de alta qualidade.
+              </p>
+              <p class="text-lg text-gray-400 leading-relaxed">
+                Com o OnlyNex, você tem acesso a uma comunidade selecionada de
+                criadoras que compartilham conteúdo exclusivo e personalizado,
+                tudo em uma plataforma segura, verificada e fácil de usar.
+              </p>
+            </div>
+            <div class="feature-card" data-aos="fade-left">
+              <div class="space-y-6">
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i data-lucide="lock" class="w-6 h-6 text-blue-400"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold mb-2 gradient-primary-text">
+                      Segurança e Privacidade
+                    </h3>
+                    <p class="text-gray-300">
+                      Todas as criadoras são verificadas. Seus dados protegidos
+                      com os mais altos padrões de segurança.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i data-lucide="star" class="w-6 h-6 text-blue-400"></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold mb-2 gradient-primary-text">
+                      Conteúdo Premium
+                    </h3>
+                    <p class="text-gray-300">
+                      Fotos, vídeos e posts exclusivos que não estão disponíveis
+                      em nenhum outro lugar.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-start gap-4">
+                  <div
+                    class="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center flex-shrink-0"
+                  >
+                    <i
+                      data-lucide="message-circle"
+                      class="w-6 h-6 text-blue-400"
+                    ></i>
+                  </div>
+                  <div>
+                    <h3 class="text-xl font-bold mb-2 gradient-primary-text">
+                      Interação Direta
+                    </h3>
+                    <p class="text-gray-300">
+                      Converse diretamente com as criadoras através de chat em
+                      tempo real.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-16 px-4">
+        <div class="max-w-7xl mx-auto">
+          <h2
+            class="text-3xl md:text-5xl lg:text-6xl font-black mb-6 gradient-primary-text text-center"
+            style="font-family: 'Poppins', sans-serif"
+            data-aos="fade-up"
+          >
+            CHAT AO VIVO COM AS MODELOS
+          </h2>
+
+          <!-- Seta Animada -->
+          <div
+            class="flex justify-center mb-12"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <i
+              data-lucide="chevron-down"
+              class="w-12 h-12 text-blue-400 animate-bounce"
+              style="animation: bounce 2s infinite"
+            ></i>
+          </div>
+
+          <!-- Container de Imagens -->
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-12 items-center justify-center max-w-7xl mx-auto"
+            data-aos="fade-up"
+            data-aos-delay="400"
+          >
+            <div>
+              <img
+                src="PC1.png"
+                alt="Chat OnlyNex - Tela 1"
+                class="w-full max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto h-auto rounded-xl shadow-2xl transform transition-transform duration-300 hover:scale-105"
+              />
+            </div>
+            <div>
+              <img
+                src="PC2.png"
+                alt="Chat OnlyNex - Tela 2"
+                class="w-full max-w-md md:max-w-lg lg:max-w-xl xl:max-w-2xl mx-auto h-auto rounded-xl shadow-2xl transform transition-transform duration-300 hover:scale-105"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+          <!-- Price CTA -->
+          <div
+            class="max-w-2xl mx-auto text-center mb-16"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="mb-8">
+              <div class="relative z-50">
+                <div class="text-4xl md:text-6xl font-black mb-4">
+                  USD <span class="text-6xl md:text-8xl">29</span>/mês
+                </div>
+                <p
+                  class="text-xl text-white/90 mb-6 flex items-center justify-center gap-2"
+                >
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                  Cancele a qualquer momento • Sem compromisso • Acesso completo
+                </p>
+                <button class="btn-primary animate-bounce">
+                  <span class="flex items-center justify-center gap-2">
+                    <i data-lucide="rocket" class="w-5 h-5"></i>
+                    COMEÇAR AGORA
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Marquee 2 -->
+      <div class="marquee-container style-2">
+        <div class="marquee">
+          <span class="marquee-text"
+            >✨ MILHARES DE USUÁRIOS • ONLYNEX • INTERAÇÃO DIRETA • MENSAGENS
+            PRIVADAS • CONTEÚDO ATUALIZADO • FOTOS EXCLUSIVAS • VÍDEOS DE ALTA
+            QUALIDADE • INTERFACE INTUITIVA • FÁCIL NAVEGAÇÃO • PERFIS
+            AUTENTICADOS • VERIFICAÇÃO COMPLETA • SUPORTE 24/7 • PAGAMENTO
+            SEGURO • CANCELAMENTO INSTANTÂNEO • ACESSO ILIMITADO • COMUNIDADE
+            SELECIONADA • CRIADORAS PROFISSIONAIS • CONTEÚDO PERSONALIZADO •
+            EXPERIÊNCIA PREMIUM • ✨ MILHARES DE USUÁRIOS • ONLYNEX • INTERAÇÃO
+            DIRETA • MENSAGENS PRIVADAS • CONTEÚDO ATUALIZADO • FOTOS EXCLUSIVAS
+            • VÍDEOS DE ALTA QUALIDADE • INTERFACE INTUITIVA • FÁCIL NAVEGAÇÃO •
+            PERFIS AUTENTICADOS • VERIFICAÇÃO COMPLETA • SUPORTE 24/7 •
+            PAGAMENTO SEGURO • CANCELAMENTO INSTANTÂNEO • ACESSO ILIMITADO •
+            COMUNIDADE SELECIONADA • CRIADORAS PROFISSIONAIS • CONTEÚDO
+            PERSONALIZADO • EXPERIÊNCIA PREMIUM • ✨ MILHARES DE USUÁRIOS •
+            ONLYNEX • INTERAÇÃO DIRETA • MENSAGENS PRIVADAS • CONTEÚDO
+            ATUALIZADO • FOTOS EXCLUSIVAS • VÍDEOS DE ALTA QUALIDADE • INTERFACE
+            INTUITIVA • FÁCIL NAVEGAÇÃO • PERFIS AUTENTICADOS • VERIFICAÇÃO
+            COMPLETA • SUPORTE 24/7 • PAGAMENTO SEGURO •</span
+          >
+        </div>
+      </div>
+
+      <!-- Models Grid Section -->
+      <section>
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-12" data-aos="fade-up">
+            <h2
+              class="text-4xl md:text-6xl font-black mb-4 gradient-primary-text"
+              style="font-family: 'Poppins', sans-serif"
+            >
+              DESCUBRA NOSSA COMUNIDADE EXCLUSIVA
+            </h2>
+            <p class="text-2xl md:text-3xl text-gray-300 mb-2">
+              Modelos verificadas e criadoras premium
+            </p>
+            <p class="text-xl md:text-2xl gradient-primary-text font-bold mt-4">
+              Conteúdo exclusivo de alta qualidade • Atualizado diariamente
+            </p>
+          </div>
+
+          <!-- Models Grid -->
+          <div class="model-grid mb-12" data-aos="fade-up" data-aos-delay="100">
+            <div class="model-card">
+              <img src="modelo1.png" alt="Modelo 1" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo2.png" alt="Modelo 2" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo3.png" alt="Modelo 3" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo4.png" alt="Modelo 4" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo5.png" alt="Modelo 5" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo6.png" alt="Modelo 6" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo7.png" alt="Modelo 7" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo8.png" alt="Modelo 8" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modeo9.png" alt="Modelo 9" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo10.png" alt="Modelo 10" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo11.png" alt="Modelo 11" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo12.png" alt="Modelo 12" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo13.png" alt="Modelo 13" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="mode13.png" alt="Modelo 14" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo14.png" alt="Modelo 15" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo15.png" alt="Modelo 16" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo16.png" alt="Modelo 17" class="w-full h-auto" />
+            </div>
+            <div class="model-card">
+              <img src="modelo17.png" alt="Modelo 18" class="w-full h-auto" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Hero Section -->
+      <section class="relative overflow-hidden">
+        <div class="max-w-7xl mx-auto">
+          <!-- Price CTA -->
+          <div
+            class="max-w-2xl mx-auto text-center mb-16"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <div class="mb-8">
+              <div class="relative z-50">
+                <div class="text-4xl md:text-6xl font-black mb-4">
+                  USD <span class="text-6xl md:text-8xl">29</span>/mês
+                </div>
+                <p
+                  class="text-xl text-white/90 mb-6 flex items-center justify-center gap-2"
+                >
+                  <i data-lucide="sparkles" class="w-5 h-5"></i>
+                  Cancele a qualquer momento • Sem compromisso • Acesso completo
+                </p>
+                <button class="btn-primary animate-bounce">
+                  <span class="flex items-center justify-center gap-2">
+                    <i data-lucide="rocket" class="w-5 h-5"></i>
+                    COMEÇAR AGORA
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Marquee 3 -->
+      <div class="marquee-container style-3">
+        <div class="marquee ultra-slow">
+          <span class="marquee-text"
+            >💎 ONLYNEX • PREÇO ÚNICO • USD 29 POR MÊS • ASSINATURA MENSAL •
+            CANCELE A QUALQUER MOMENTO • SEM TAXAS OCULTAS • SEM COMPROMISSO •
+            ACESSO COMPLETO • TODAS AS FUNCIONALIDADES • CHAT EM TEMPO REAL •
+            GALERIA ILIMITADA • VÍDEOS EXCLUSIVOS • TODAS AS CRIADORAS • PERFIS
+            VERIFICADOS • NOVO CONTEÚDO DIÁRIO • INTERFACE MODERNA • PLATAFORMA
+            SEGURA • DADOS PROTEGIDOS • PRIVACIDADE TOTAL • EXPERIÊNCIA PREMIUM
+            • 💎 ONLYNEX • PREÇO ÚNICO • USD 29 POR MÊS • ASSINATURA MENSAL •
+            CANCELE A QUALQUER MOMENTO • SEM TAXAS OCULTAS • SEM COMPROMISSO •
+            ACESSO COMPLETO • TODAS AS FUNCIONALIDADES • CHAT EM TEMPO REAL •
+            GALERIA ILIMITADA • VÍDEOS EXCLUSIVOS • TODAS AS CRIADORAS • PERFIS
+            VERIFICADOS • NOVO CONTEÚDO DIÁRIO • INTERFACE MODERNA • PLATAFORMA
+            SEGURA • DADOS PROTEGIDOS • PRIVACIDADE TOTAL • EXPERIÊNCIA PREMIUM
+            • 💎 ONLYNEX • PREÇO ÚNICO • USD 29 POR MÊS • ASSINATURA MENSAL •
+            CANCELE A QUALQUER MOMENTO • SEM TAXAS OCULTAS • SEM COMPROMISSO •
+            ACESSO COMPLETO • TODAS AS FUNCIONALIDADES • CHAT EM TEMPO REAL •
+            GALERIA ILIMITADA • VÍDEOS EXCLUSIVOS •</span
+          >
+        </div>
+      </div>
+
+      <!-- Videos Section -->
+      <section class="bg-black/30">
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-12" data-aos="fade-up">
+            <h2
+              class="text-4xl md:text-6xl font-black mb-4 gradient-primary-text"
+              style="font-family: 'Poppins', sans-serif"
+            >
+              EXPERIÊNCIA COMPLETA E INTERATIVA
+            </h2>
+            <p class="text-xl text-gray-300 mt-4">
+              Vídeos exclusivos e conteúdo premium disponível na plataforma
+            </p>
+          </div>
+
+          <div class="video-grid" data-aos="fade-up" data-aos-delay="100">
+            <div class="video-container">
+              <video controls muted>
+                <source src="vid1.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="video-container">
+              <video controls muted>
+                <source src="vid2.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="video-container">
+              <video controls muted>
+                <source src="vid3.mp4" type="video/mp4" />
+              </video>
+            </div>
+            <div class="video-container">
+              <video controls muted>
+                <source src="vid4.mp4" type="video/mp4" />
+              </video>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Benefits Section -->
+      <section>
+        <div class="max-w-7xl mx-auto">
+          <div class="text-center mb-16" data-aos="fade-up">
+            <h2
+              class="text-4xl md:text-6xl font-black mb-6 gradient-pink-text"
+              style="font-family: 'Poppins', sans-serif"
+            >
+              O QUE VOCÊ VAI RECEBER
+            </h2>
+          </div>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100">
+              <div
+                class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4"
+              >
+                <i
+                  data-lucide="message-circle"
+                  class="w-8 h-8 text-blue-400"
+                ></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4 gradient-primary-text">
+                Chat em Tempo Real
+              </h3>
+              <p class="text-gray-300">
+                Converse diretamente com as criadoras através de mensagens
+                privadas. Interação pessoal e exclusiva no OnlyNex.
+              </p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200">
+              <div
+                class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4"
+              >
+                <i data-lucide="image" class="w-8 h-8 text-blue-400"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4 gradient-primary-text">
+                Galeria de Fotos
+              </h3>
+              <p class="text-gray-300">
+                Explore galerias completas de fotos exclusivas em alta
+                qualidade. Conteúdo visual premium atualizado constantemente.
+              </p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300">
+              <div
+                class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4"
+              >
+                <i data-lucide="video" class="w-8 h-8 text-blue-400"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4 gradient-primary-text">
+                Vídeos Exclusivos
+              </h3>
+              <p class="text-gray-300">
+                Assista a vídeos exclusivos e conteúdo em movimento. Experiência
+                visual imersiva e de alta qualidade na plataforma.
+              </p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400">
+              <div
+                class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4"
+              >
+                <i data-lucide="badge-check" class="w-8 h-8 text-blue-400"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4 gradient-primary-text">
+                Perfis Verificados
+              </h3>
+              <p class="text-gray-300">
+                Todas as criadoras são verificadas e autenticadas. Segurança e
+                confiança garantidas no OnlyNex.
+              </p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500">
+              <div
+                class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4"
+              >
+                <i data-lucide="circle-dot" class="w-8 h-8 text-green-400"></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4 gradient-primary-text">
+                Status Online
+              </h3>
+              <p class="text-gray-300">
+                Veja quando suas criadoras favoritas estão online e disponíveis
+                para interação em tempo real.
+              </p>
+            </div>
+
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="600">
+              <div
+                class="w-16 h-16 bg-blue-500/20 rounded-xl flex items-center justify-center mb-4"
+              >
+                <i
+                  data-lucide="layout-dashboard"
+                  class="w-8 h-8 text-blue-400"
+                ></i>
+              </div>
+              <h3 class="text-2xl font-bold mb-4 gradient-primary-text">
+                Dashboard Personalizado
+              </h3>
+              <p class="text-gray-300">
+                Interface intuitiva e fácil de usar. Navegue pelos perfis,
+                explore conteúdo e gerencie suas interações no OnlyNex.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Marquee 4 -->
+      <div class="marquee-container style-4">
+        <div class="marquee slow">
+          <span class="marquee-text"
+            >🎉 DESCUBRA O ONLYNEX • PLATAFORMA PREMIUM DE CONTEÚDO EXCLUSIVO •
+            CONECTE-SE COM CRIADORAS VERIFICADAS • ACESSE MATERIAL EXCLUSIVO •
+            CHAT DIRETO COM AS MODELOS • GALERIA DE FOTOS PREMIUM • VÍDEOS EM
+            ALTA QUALIDADE • COMUNIDADE SELECIONADA • INTERAÇÃO PESSOAL •
+            CONTEÚDO ATUALIZADO DIARIAMENTE • PERFIS 100% VERIFICADOS •
+            SEGURANÇA GARANTIDA • PRIVACIDADE TOTAL • INTERFACE MODERNA •
+            EXPERIÊNCIA ÚNICA • ACESSO ILIMITADO • CANCELAMENTO FLEXÍVEL • PREÇO
+            ACESSÍVEL • USD 29 POR MÊS • SEM COMPROMISSO • SUPORTE DEDICADO • 🎉
+            DESCUBRA O ONLYNEX • PLATAFORMA PREMIUM DE CONTEÚDO EXCLUSIVO •
+            CONECTE-SE COM CRIADORAS VERIFICADAS • ACESSE MATERIAL EXCLUSIVO •
+            CHAT DIRETO COM AS MODELOS • GALERIA DE FOTOS PREMIUM • VÍDEOS EM
+            ALTA QUALIDADE • COMUNIDADE SELECIONADA • INTERAÇÃO PESSOAL •
+            CONTEÚDO ATUALIZADO DIARIAMENTE • PERFIS 100% VERIFICADOS •
+            SEGURANÇA GARANTIDA • PRIVACIDADE TOTAL • INTERFACE MODERNA •
+            EXPERIÊNCIA ÚNICA • ACESSO ILIMITADO • CANCELAMENTO FLEXÍVEL • PREÇO
+            ACESSÍVEL • USD 29 POR MÊS • SEM COMPROMISSO • SUPORTE DEDICADO • 🎉
+            DESCUBRA O ONLYNEX • PLATAFORMA PREMIUM DE CONTEÚDO EXCLUSIVO •
+            CONECTE-SE COM CRIADORAS VERIFICADAS • ACESSE MATERIAL EXCLUSIVO •
+            CHAT DIRETO COM AS MODELOS • GALERIA DE FOTOS PREMIUM • VÍDEOS EM
+            ALTA QUALIDADE • COMUNIDADE SELECIONADA • INTERAÇÃO PESSOAL •
+            CONTEÚDO ATUALIZADO DIARIAMENTE • PERFIS 100% VERIFICADOS •
+            SEGURANÇA GARANTIDA • PRIVACIDADE TOTAL • INTERFACE MODERNA •
+            EXPERIÊNCIA ÚNICA • ACESSO ILIMITADO •</span
+          >
+        </div>
+      </div>
+
+      <!-- Final CTA Section -->
+      <section class="gradient-primary relative overflow-hidden">
+        <div class="absolute inset-0 bg-black/30"></div>
+        <div class="max-w-5xl mx-auto text-center relative z-10">
+          <h2
+            class="text-4xl md:text-6xl font-black mb-8 text-white"
+            style="font-family: 'Poppins', sans-serif"
+            data-aos="fade-up"
+          >
+            PRONTO PARA COMEÇAR NO ONLYNEX?
+          </h2>
+          <p
+            class="text-xl md:text-2xl text-white/90 mb-12 max-w-3xl mx-auto"
+            data-aos="fade-up"
+            data-aos-delay="100"
+          >
+            Junte-se a milhares de usuários que já descobriram o melhor conteúdo
+            exclusivo na plataforma OnlyNex. Comece agora e cancele quando
+            quiser.
+          </p>
+
+          <div
+            class="bg-white/10 backdrop-blur-lg rounded-3xl p-12 mb-8 border-2 border-white/30 glow-primary"
+            data-aos="zoom-in"
+            data-aos-delay="200"
+          >
+            <div class="mb-8">
+              <span class="text-3xl font-light text-white">USD</span>
+              <span class="text-7xl md:text-9xl font-black mx-4 text-white"
+                >29</span
+              >
+              <span class="text-3xl font-light text-white">/mês</span>
+            </div>
+            <div class="text-white/90 text-lg mb-8 space-y-3">
+              <div class="flex items-center justify-center gap-2">
+                <span>✓</span>
+                <span>Cancele a qualquer momento</span>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <span>✓</span>
+                <span>Sem compromisso</span>
+              </div>
+              <div class="flex items-center justify-center gap-2">
+                <span>✓</span>
+                <span>Acesso completo ao OnlyNex</span>
+              </div>
+            </div>
+            <button class="btn-primary bg-white hover:bg-gray-100">
+              <span class="flex items-center justify-center gap-2">
+                <i data-lucide="sparkles" class="w-5 h-5"></i>
+                ASSINAR AGORA
+              </span>
+            </button>
+          </div>
+
+          <p
+            class="text-sm text-white/80 flex items-center justify-center gap-4 flex-wrap"
+          >
+            <span class="flex items-center gap-1">
+              <i data-lucide="lock" class="w-4 h-4"></i>
+              Pagamento seguro
+            </span>
+            <span>•</span>
+            <span class="flex items-center gap-1">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              Cancelamento instantâneo
+            </span>
+            <span>•</span>
+            <span class="flex items-center gap-1">
+              <i data-lucide="headphones" class="w-4 h-4"></i>
+              Suporte 24/7
+            </span>
+          </p>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="bg-black py-12 px-4 border-t border-gray-800">
+        <div class="max-w-7xl mx-auto text-center">
+          <h3 class="text-3xl font-black mb-4 gradient-primary-text">
+            ONLYNEX
+          </h3>
+          <p class="text-gray-400 mb-6">
+            A plataforma premium de conteúdo exclusivo
+          </p>
+          <div class="border-t border-gray-800 pt-8 text-gray-500 text-sm">
+            <p>&copy; 2024 OnlyNex. Todos os direitos reservados.</p>
+          </div>
+        </div>
+      </footer>
+
+      <!-- Scripts -->
+      <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+      <script>
+        // Initialize AOS
+        AOS.init({
+          duration: 1000,
+          once: true,
+          offset: 100,
+        });
+
+        // Initialize Lucide Icons
+        document.addEventListener("DOMContentLoaded", () => {
+          if (typeof lucide !== "undefined") {
+            lucide.createIcons();
+          }
+        });
+
+        // GSAP ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Parallax effect for hero
+        gsap.to(".float", {
+          y: -20,
+          duration: 3,
+          repeat: -1,
+          yoyo: true,
+          ease: "power1.inOut",
+        });
+
+        // Smooth scroll for buttons
+        document.querySelectorAll(".btn-primary").forEach((btn) => {
+          btn.addEventListener("click", (e) => {
+            e.preventDefault();
+            // Add your payment/redirect logic here
+            console.log("Button clicked!");
+          });
+        });
+
+        // Video autoplay on scroll
+        const videos = document.querySelectorAll("video");
+        const observerOptions = {
+          threshold: 0.5,
+        };
+
+        const videoObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.play();
+            } else {
+              entry.target.pause();
+            }
+          });
+        }, observerOptions);
+
+        videos.forEach((video) => {
+          videoObserver.observe(video);
+        });
+
+        // Initialize Particles.js
+        particlesJS("particles-js", {
+          particles: {
+            number: {
+              value: 80,
+              density: {
+                enable: true,
+                value_area: 800,
+              },
+            },
+            color: {
+              value: "#0ea5e9",
+            },
+            shape: {
+              type: "circle",
+            },
+            opacity: {
+              value: 0.5,
+              random: true,
+              anim: {
+                enable: true,
+                speed: 1,
+                opacity_min: 0.1,
+                sync: false,
+              },
+            },
+            size: {
+              value: 3,
+              random: true,
+              anim: {
+                enable: true,
+                speed: 2,
+                size_min: 0.1,
+                sync: false,
+              },
+            },
+            line_linked: {
+              enable: true,
+              distance: 150,
+              color: "#0ea5e9",
+              opacity: 0.2,
+              width: 1,
+            },
+            move: {
+              enable: true,
+              speed: 2,
+              direction: "none",
+              random: false,
+              straight: false,
+              out_mode: "out",
+              bounce: false,
+              attract: {
+                enable: false,
+                rotateX: 600,
+                rotateY: 1200,
+              },
+            },
+          },
+          interactivity: {
+            detect_on: "canvas",
+            events: {
+              onhover: {
+                enable: true,
+                mode: "repulse",
+              },
+              onclick: {
+                enable: true,
+                mode: "push",
+              },
+              resize: true,
+            },
+            modes: {
+              grab: {
+                distance: 400,
+                line_linked: {
+                  opacity: 1,
+                },
+              },
+              bubble: {
+                distance: 400,
+                size: 40,
+                duration: 2,
+                opacity: 8,
+                speed: 3,
+              },
+              repulse: {
+                distance: 100,
+                duration: 0.4,
+              },
+              push: {
+                particles_nb: 4,
+              },
+              remove: {
+                particles_nb: 2,
+              },
+            },
+          },
+          retina_detect: true,
+        });
+      </script>
+    </div>
+  </body>
+</html>
