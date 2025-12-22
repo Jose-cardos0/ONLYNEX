@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "../config/firebase";
 import {
@@ -27,9 +27,7 @@ import {
   Save,
   Loader2,
   Users,
-  Eye,
   CheckCircle,
-  XCircle,
   DollarSign,
   Heart,
   FileText,
@@ -37,6 +35,7 @@ import {
   MessageCircle,
   Play,
 } from "lucide-react";
+import logo from "../assets/logo.png";
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -253,10 +252,7 @@ export default function AdminDashboard() {
   const handleAddVideo = () => {
     setFormData((prev) => ({
       ...prev,
-      videos: [
-        ...prev.videos,
-        { thumbnail: "", duration: "", videoUrl: "" },
-      ],
+      videos: [...prev.videos, { thumbnail: "", duration: "", videoUrl: "" }],
     }));
   };
 
@@ -403,90 +399,106 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50 flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-sky-500 animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-sky-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50">
+      <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-slate-100">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-sky-500 to-cyan-500 rounded-xl flex items-center justify-center">
-                <Shield className="w-5 h-5 text-white" />
+          <div className="flex items-center justify-between h-16 sm:h-20">
+            {/* Logo */}
+            <Link to="/admin/dashboard" className="flex items-center gap-3">
+              <img src={logo} alt="ONLYNEX" className="h-8 sm:h-10 w-auto" />
+              <div className="hidden sm:flex items-center gap-2">
+                <span className="text-xl sm:text-2xl font-bold gradient-text">
+                  ONLYNEX
+                </span>
+                <span className="px-2 py-0.5 bg-sky-100 text-sky-600 text-xs font-semibold rounded-full">
+                  Admin
+                </span>
               </div>
-              <div>
-                <h1 className="text-lg font-bold text-white">Admin OnlyNex</h1>
-                <p className="text-xs text-slate-400">{user?.email}</p>
-              </div>
-            </div>
+            </Link>
 
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 text-slate-400 hover:text-white transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="hidden sm:inline">Sair</span>
-            </button>
+            {/* User menu */}
+            <div className="flex items-center gap-3 sm:gap-4">
+              <div className="hidden sm:flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-50 to-cyan-50 rounded-full">
+                <div className="w-8 h-8 bg-gradient-to-br from-sky-400 to-cyan-400 rounded-full flex items-center justify-center">
+                  <Shield className="w-4 h-4 text-white" />
+                </div>
+                <span className="text-slate-700 font-medium text-sm">
+                  {user?.email?.split("@")[0]}
+                </span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="p-2 sm:p-3 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-all"
+                title="Sair"
+              >
+                <LogOut className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
       {/* Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         {/* Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
+          <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-sky-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-sky-100 rounded-xl flex items-center justify-center">
                 <Users className="w-5 h-5 text-sky-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">{models.length}</p>
-                <p className="text-xs text-slate-400">Modelos</p>
+                <p className="text-2xl font-bold text-slate-900">
+                  {models.length}
+                </p>
+                <p className="text-xs text-slate-500">Modelos</p>
               </div>
             </div>
           </div>
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
+          <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
                 <CheckCircle className="w-5 h-5 text-green-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-slate-900">
                   {models.filter((m) => m.isOnline).length}
                 </p>
-                <p className="text-xs text-slate-400">Online</p>
+                <p className="text-xs text-slate-500">Online</p>
               </div>
             </div>
           </div>
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
+          <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-purple-100 rounded-xl flex items-center justify-center">
                 <Image className="w-5 h-5 text-purple-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-slate-900">
                   {models.reduce((acc, m) => acc + (m.photos?.length || 0), 0)}
                 </p>
-                <p className="text-xs text-slate-400">Fotos</p>
+                <p className="text-xs text-slate-500">Fotos</p>
               </div>
             </div>
           </div>
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-xl p-4 border border-slate-700/50">
+          <div className="bg-white rounded-2xl p-4 border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-rose-500/20 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-rose-100 rounded-xl flex items-center justify-center">
                 <Video className="w-5 h-5 text-rose-500" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-white">
+                <p className="text-2xl font-bold text-slate-900">
                   {models.reduce((acc, m) => acc + (m.videos?.length || 0), 0)}
                 </p>
-                <p className="text-xs text-slate-400">Vídeos</p>
+                <p className="text-xs text-slate-500">Vídeos</p>
               </div>
             </div>
           </div>
@@ -494,7 +506,9 @@ export default function AdminDashboard() {
 
         {/* Header com botão */}
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-white">Gerenciar Modelos</h2>
+          <h2 className="text-xl font-bold text-slate-900">
+            Gerenciar Modelos
+          </h2>
           <button
             onClick={handleCreate}
             className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-sky-500 to-cyan-500 hover:from-sky-600 hover:to-cyan-600 text-white font-semibold rounded-xl shadow-lg shadow-sky-500/25 transition-all"
@@ -509,7 +523,7 @@ export default function AdminDashboard() {
           {models.map((model) => (
             <div
               key={model.id}
-              className="bg-slate-800/50 backdrop-blur-sm rounded-xl border border-slate-700/50 overflow-hidden hover:border-sky-500/50 transition-colors"
+              className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:shadow-lg hover:shadow-sky-100/50 hover:-translate-y-1 transition-all duration-300"
             >
               {/* Cover */}
               <div className="relative h-24 overflow-hidden">
@@ -518,7 +532,7 @@ export default function AdminDashboard() {
                   alt=""
                   className="w-full h-full object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-800 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-white to-transparent" />
               </div>
 
               {/* Info */}
@@ -527,21 +541,21 @@ export default function AdminDashboard() {
                   <img
                     src={model.avatar || "https://via.placeholder.com/80"}
                     alt={model.name}
-                    className="w-16 h-16 rounded-full border-4 border-slate-800 object-cover"
+                    className="w-16 h-16 rounded-full border-4 border-white shadow-lg object-cover"
                   />
                   <div className="flex-1 pb-1">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                    <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
                       {model.name}
                       {model.isVerified && (
                         <CheckCircle className="w-4 h-4 text-sky-500" />
                       )}
                     </h3>
-                    <p className="text-sm text-slate-400">{model.username}</p>
+                    <p className="text-sm text-sky-500">{model.username}</p>
                   </div>
                 </div>
 
                 {/* Stats */}
-                <div className="flex items-center gap-4 text-sm text-slate-400 mb-4">
+                <div className="flex items-center gap-4 text-sm text-slate-500 mb-4">
                   <span className="flex items-center gap-1">
                     <Users className="w-4 h-4" />
                     {model.subscribers || 0}
@@ -556,12 +570,12 @@ export default function AdminDashboard() {
                   </span>
                   <span
                     className={`flex items-center gap-1 ${
-                      model.isOnline ? "text-green-500" : "text-slate-500"
+                      model.isOnline ? "text-green-500" : "text-slate-400"
                     }`}
                   >
                     <div
                       className={`w-2 h-2 rounded-full ${
-                        model.isOnline ? "bg-green-500" : "bg-slate-500"
+                        model.isOnline ? "bg-green-500" : "bg-slate-300"
                       }`}
                     />
                     {model.isOnline ? "Online" : "Offline"}
@@ -572,14 +586,14 @@ export default function AdminDashboard() {
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEdit(model)}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors"
                   >
                     <Edit className="w-4 h-4" />
                     Editar
                   </button>
                   <button
                     onClick={() => handleDelete(model)}
-                    className="flex items-center justify-center px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+                    className="flex items-center justify-center px-4 py-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-xl transition-colors"
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -591,11 +605,11 @@ export default function AdminDashboard() {
           {/* Empty state */}
           {models.length === 0 && (
             <div className="col-span-full text-center py-12">
-              <Users className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">Nenhuma modelo cadastrada</p>
+              <Users className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+              <p className="text-slate-500">Nenhuma modelo cadastrada</p>
               <button
                 onClick={handleCreate}
-                className="mt-4 text-sky-500 hover:text-sky-400 transition-colors"
+                className="mt-4 text-sky-500 hover:text-sky-600 transition-colors"
               >
                 Criar primeira modelo
               </button>
@@ -606,16 +620,16 @@ export default function AdminDashboard() {
 
       {/* Modal de criação/edição */}
       {showModal && (
-        <div className="fixed inset-0 z-[100] bg-black/80 flex items-start justify-center overflow-y-auto p-4">
-          <div className="relative w-full max-w-3xl bg-slate-800 rounded-2xl border border-slate-700 my-8">
+        <div className="fixed inset-0 z-[100] bg-black/50 backdrop-blur-sm flex items-start justify-center overflow-y-auto p-4">
+          <div className="relative w-full max-w-6xl bg-white rounded-3xl border border-slate-200 shadow-2xl my-8">
             {/* Header do modal */}
-            <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-slate-700 bg-slate-800 rounded-t-2xl">
-              <h2 className="text-xl font-bold text-white">
+            <div className="sticky top-0 z-10 flex items-center justify-between p-6 border-b border-slate-100 bg-white rounded-t-3xl">
+              <h2 className="text-xl font-bold text-slate-900">
                 {editingModel ? "Editar Modelo" : "Nova Modelo"}
               </h2>
               <button
                 onClick={() => setShowModal(false)}
-                className="p-2 text-slate-400 hover:text-white transition-colors"
+                className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X className="w-6 h-6" />
               </button>
@@ -625,29 +639,32 @@ export default function AdminDashboard() {
             <div className="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
               {/* Informações básicas */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                   <FileText className="w-5 h-5 text-sky-500" />
                   Informações Básicas
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Nome *
                     </label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) =>
-                        setFormData((prev) => ({ ...prev, name: e.target.value }))
+                        setFormData((prev) => ({
+                          ...prev,
+                          name: e.target.value,
+                        }))
                       }
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all"
                       placeholder="Nome da modelo"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Username *
                     </label>
                     <input
@@ -659,14 +676,14 @@ export default function AdminDashboard() {
                           username: e.target.value,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all"
                       placeholder="@username"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                  <label className="block text-sm font-medium text-slate-700 mb-2">
                     Bio
                   </label>
                   <textarea
@@ -675,14 +692,14 @@ export default function AdminDashboard() {
                       setFormData((prev) => ({ ...prev, bio: e.target.value }))
                     }
                     rows={3}
-                    className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all resize-none"
                     placeholder="Descrição da modelo"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       <DollarSign className="w-4 h-4 inline mr-1" />
                       Preço (R$)
                     </label>
@@ -696,12 +713,12 @@ export default function AdminDashboard() {
                           price: parseFloat(e.target.value) || 0,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       <Users className="w-4 h-4 inline mr-1" />
                       Assinantes
                     </label>
@@ -714,12 +731,12 @@ export default function AdminDashboard() {
                           subscribers: parseInt(e.target.value) || 0,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       <FileText className="w-4 h-4 inline mr-1" />
                       Posts
                     </label>
@@ -732,12 +749,12 @@ export default function AdminDashboard() {
                           posts: parseInt(e.target.value) || 0,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       <Heart className="w-4 h-4 inline mr-1" />
                       Curtidas
                     </label>
@@ -750,7 +767,7 @@ export default function AdminDashboard() {
                           likes: parseInt(e.target.value) || 0,
                         }))
                       }
-                      className="w-full px-4 py-3 bg-slate-700/50 border border-slate-600 rounded-xl text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                      className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all"
                     />
                   </div>
                 </div>
@@ -766,9 +783,9 @@ export default function AdminDashboard() {
                           isOnline: e.target.checked,
                         }))
                       }
-                      className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500"
+                      className="w-5 h-5 rounded border-slate-300 bg-slate-50 text-sky-500 focus:ring-sky-400"
                     />
-                    <span className="text-slate-300">Online</span>
+                    <span className="text-slate-700">Online</span>
                   </label>
 
                   <label className="flex items-center gap-2 cursor-pointer">
@@ -781,16 +798,16 @@ export default function AdminDashboard() {
                           isVerified: e.target.checked,
                         }))
                       }
-                      className="w-5 h-5 rounded border-slate-600 bg-slate-700 text-sky-500 focus:ring-sky-500"
+                      className="w-5 h-5 rounded border-slate-300 bg-slate-50 text-sky-500 focus:ring-sky-400"
                     />
-                    <span className="text-slate-300">Verificada</span>
+                    <span className="text-slate-700">Verificada</span>
                   </label>
                 </div>
               </div>
 
               {/* Avatar e Cover */}
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                   <Image className="w-5 h-5 text-sky-500" />
                   Avatar e Capa
                 </h3>
@@ -798,7 +815,7 @@ export default function AdminDashboard() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {/* Avatar */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Avatar
                     </label>
                     <div className="flex items-center gap-4">
@@ -806,15 +823,15 @@ export default function AdminDashboard() {
                         <img
                           src={formData.avatar}
                           alt="Avatar"
-                          className="w-20 h-20 rounded-full object-cover border-2 border-slate-600"
+                          className="w-20 h-20 rounded-full object-cover border-2 border-slate-200"
                         />
                       ) : (
-                        <div className="w-20 h-20 rounded-full bg-slate-700 flex items-center justify-center border-2 border-slate-600">
-                          <Image className="w-8 h-8 text-slate-500" />
+                        <div className="w-20 h-20 rounded-full bg-slate-100 flex items-center justify-center border-2 border-slate-200">
+                          <Image className="w-8 h-8 text-slate-400" />
                         </div>
                       )}
                       <label className="flex-1">
-                        <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl cursor-pointer transition-colors">
+                        <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl cursor-pointer transition-colors">
                           {uploadingAvatar ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                           ) : (
@@ -834,7 +851,7 @@ export default function AdminDashboard() {
 
                   {/* Cover */}
                   <div>
-                    <label className="block text-sm font-medium text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Capa
                     </label>
                     <div className="flex items-center gap-4">
@@ -842,15 +859,15 @@ export default function AdminDashboard() {
                         <img
                           src={formData.cover}
                           alt="Cover"
-                          className="w-20 h-20 rounded-lg object-cover border-2 border-slate-600"
+                          className="w-20 h-20 rounded-xl object-cover border-2 border-slate-200"
                         />
                       ) : (
-                        <div className="w-20 h-20 rounded-lg bg-slate-700 flex items-center justify-center border-2 border-slate-600">
-                          <Image className="w-8 h-8 text-slate-500" />
+                        <div className="w-20 h-20 rounded-xl bg-slate-100 flex items-center justify-center border-2 border-slate-200">
+                          <Image className="w-8 h-8 text-slate-400" />
                         </div>
                       )}
                       <label className="flex-1">
-                        <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-xl cursor-pointer transition-colors">
+                        <div className="flex items-center justify-center gap-2 px-4 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl cursor-pointer transition-colors">
                           {uploadingCover ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                           ) : (
@@ -873,12 +890,12 @@ export default function AdminDashboard() {
               {/* Fotos */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                     <Image className="w-5 h-5 text-sky-500" />
                     Fotos ({formData.photos.length})
                   </h3>
                   <label>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg cursor-pointer transition-colors text-sm">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl cursor-pointer transition-colors text-sm">
                       {uploadingPhotos ? (
                         <Loader2 className="w-4 h-4 animate-spin" />
                       ) : (
@@ -903,7 +920,7 @@ export default function AdminDashboard() {
                         <img
                           src={photo}
                           alt=""
-                          className="w-full h-full object-cover rounded-lg"
+                          className="w-full h-full object-cover rounded-xl"
                         />
                         <button
                           onClick={() => handleRemovePhoto(index)}
@@ -920,13 +937,13 @@ export default function AdminDashboard() {
               {/* Vídeos */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                     <Video className="w-5 h-5 text-sky-500" />
                     Vídeos ({formData.videos.length})
                   </h3>
                   <button
                     onClick={handleAddVideo}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-700 hover:bg-slate-600 text-white rounded-lg transition-colors text-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition-colors text-sm"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Adicionar Vídeo</span>
@@ -936,15 +953,15 @@ export default function AdminDashboard() {
                 {formData.videos.map((video, index) => (
                   <div
                     key={index}
-                    className="bg-slate-700/50 rounded-xl p-4 space-y-4 border border-slate-600"
+                    className="bg-slate-50 rounded-xl p-4 space-y-4 border border-slate-200"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-white font-medium">
+                      <span className="text-slate-900 font-medium">
                         Vídeo {index + 1}
                       </span>
                       <button
                         onClick={() => handleRemoveVideo(index)}
-                        className="p-1 text-red-400 hover:text-red-300 transition-colors"
+                        className="p-1 text-red-500 hover:text-red-600 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -953,7 +970,7 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* Thumbnail */}
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Thumbnail
                         </label>
                         <div className="flex items-center gap-3">
@@ -964,12 +981,12 @@ export default function AdminDashboard() {
                               className="w-24 h-16 object-cover rounded-lg"
                             />
                           ) : (
-                            <div className="w-24 h-16 bg-slate-600 rounded-lg flex items-center justify-center">
+                            <div className="w-24 h-16 bg-slate-200 rounded-lg flex items-center justify-center">
                               <Image className="w-6 h-6 text-slate-400" />
                             </div>
                           )}
                           <label className="flex-1">
-                            <div className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg cursor-pointer transition-colors text-sm">
+                            <div className="flex items-center justify-center gap-2 px-3 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg cursor-pointer transition-colors text-sm">
                               <Upload className="w-4 h-4" />
                               <span>Upload</span>
                             </div>
@@ -985,16 +1002,20 @@ export default function AdminDashboard() {
 
                       {/* Duração */}
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Duração
                         </label>
                         <input
                           type="text"
                           value={video.duration}
                           onChange={(e) =>
-                            handleVideoFieldChange(index, "duration", e.target.value)
+                            handleVideoFieldChange(
+                              index,
+                              "duration",
+                              e.target.value
+                            )
                           }
-                          className="w-full px-4 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
                           placeholder="Ex: 2:34"
                         />
                       </div>
@@ -1002,7 +1023,7 @@ export default function AdminDashboard() {
 
                     {/* Video URL */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         <LinkIcon className="w-4 h-4 inline mr-1" />
                         URL do Vídeo (YouTube ou Upload)
                       </label>
@@ -1011,13 +1032,17 @@ export default function AdminDashboard() {
                           type="text"
                           value={video.videoUrl}
                           onChange={(e) =>
-                            handleVideoFieldChange(index, "videoUrl", e.target.value)
+                            handleVideoFieldChange(
+                              index,
+                              "videoUrl",
+                              e.target.value
+                            )
                           }
-                          className="flex-1 px-4 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                          className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50"
                           placeholder="https://youtube.com/watch?v=... ou upload"
                         />
                         <label>
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-600 hover:bg-slate-500 text-white rounded-lg cursor-pointer transition-colors">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg cursor-pointer transition-colors">
                             {uploadingVideo ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
@@ -1040,113 +1065,122 @@ export default function AdminDashboard() {
               {/* Vídeos Digitando (Espera) */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                     <Video className="w-5 h-5 text-purple-500" />
                     Vídeos Digitando ({formData.videosDigitando?.length || 0})
                   </h3>
                   <button
                     onClick={handleAddVideoDigitando}
-                    className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg transition-colors text-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-purple-100 hover:bg-purple-200 text-purple-700 rounded-xl transition-colors text-sm"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Adicionar Vídeo</span>
                   </button>
                 </div>
 
-                <p className="text-sm text-slate-400">
-                  Vídeos de espera que ficam rodando em loop. Quando um vídeo do chat termina, volta automaticamente para um desses (aleatório).
+                <p className="text-sm text-slate-500">
+                  Vídeos de espera que ficam rodando em loop. Quando um vídeo do
+                  chat termina, volta automaticamente para um desses
+                  (aleatório).
                 </p>
 
-                {(formData.videosDigitando || []).map((videoDigitando, index) => (
-                  <div
-                    key={index}
-                    className="bg-purple-900/20 rounded-xl p-4 space-y-4 border border-purple-700/50"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="text-white font-medium flex items-center gap-2">
-                        <Play className="w-4 h-4 text-purple-400" />
-                        Vídeo Digitando {index + 1}
-                      </span>
-                      <button
-                        onClick={() => handleRemoveVideoDigitando(index)}
-                        className="p-1 text-red-400 hover:text-red-300 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Video URL */}
-                    <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
-                        <Video className="w-4 h-4 inline mr-1" />
-                        Arquivo de Vídeo *
-                      </label>
-                      <div className="flex gap-2">
-                        <input
-                          type="text"
-                          value={videoDigitando.videoUrl}
-                          className="flex-1 px-4 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-500 text-sm"
-                          placeholder="URL do vídeo (faça upload ao lado)"
-                          readOnly
-                        />
-                        <label>
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white rounded-lg cursor-pointer transition-colors">
-                            {uploadingVideoDigitando ? (
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                            ) : (
-                              <Upload className="w-4 h-4" />
-                            )}
-                            <span className="text-sm">Upload</span>
-                          </div>
-                          <input
-                            type="file"
-                            accept="video/*"
-                            onChange={(e) => handleVideoDigitandoUpload(e, index)}
-                            className="hidden"
-                          />
-                        </label>
+                {(formData.videosDigitando || []).map(
+                  (videoDigitando, index) => (
+                    <div
+                      key={index}
+                      className="bg-purple-50 rounded-xl p-4 space-y-4 border border-purple-200"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-900 font-medium flex items-center gap-2">
+                          <Play className="w-4 h-4 text-purple-500" />
+                          Vídeo Digitando {index + 1}
+                        </span>
+                        <button
+                          onClick={() => handleRemoveVideoDigitando(index)}
+                          className="p-1 text-red-500 hover:text-red-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
                       </div>
-                      {videoDigitando.videoUrl && (
-                        <p className="text-xs text-purple-400 mt-1">✓ Vídeo carregado com sucesso</p>
-                      )}
+
+                      {/* Video URL */}
+                      <div>
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
+                          <Video className="w-4 h-4 inline mr-1" />
+                          Arquivo de Vídeo *
+                        </label>
+                        <div className="flex gap-2">
+                          <input
+                            type="text"
+                            value={videoDigitando.videoUrl}
+                            className="flex-1 px-4 py-2 bg-white border border-purple-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-purple-400/50 text-sm"
+                            placeholder="URL do vídeo (faça upload ao lado)"
+                            readOnly
+                          />
+                          <label>
+                            <div className="flex items-center justify-center gap-2 px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white rounded-lg cursor-pointer transition-colors">
+                              {uploadingVideoDigitando ? (
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                              ) : (
+                                <Upload className="w-4 h-4" />
+                              )}
+                              <span className="text-sm">Upload</span>
+                            </div>
+                            <input
+                              type="file"
+                              accept="video/*"
+                              onChange={(e) =>
+                                handleVideoDigitandoUpload(e, index)
+                              }
+                              className="hidden"
+                            />
+                          </label>
+                        </div>
+                        {videoDigitando.videoUrl && (
+                          <p className="text-xs text-purple-600 mt-1">
+                            ✓ Vídeo carregado com sucesso
+                          </p>
+                        )}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  )
+                )}
               </div>
 
               {/* Vídeos do Chat (Botões) */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
                     <MessageCircle className="w-5 h-5 text-green-500" />
                     Vídeos do Chat - Botões ({formData.videosChat?.length || 0})
                   </h3>
                   <button
                     onClick={handleAddVideoChat}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-colors text-sm"
+                    className="flex items-center gap-2 px-4 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-xl transition-colors text-sm"
                   >
                     <Plus className="w-4 h-4" />
                     <span>Adicionar Vídeo Chat</span>
                   </button>
                 </div>
 
-                <p className="text-sm text-slate-400">
-                  Esses vídeos aparecem como botões. Ao clicar, o vídeo toca UMA vez e depois volta para um vídeo "digitando".
+                <p className="text-sm text-slate-500">
+                  Esses vídeos aparecem como botões. Ao clicar, o vídeo toca UMA
+                  vez e depois volta para um vídeo "digitando".
                 </p>
 
                 {(formData.videosChat || []).map((videoChat, index) => (
                   <div
                     key={index}
-                    className="bg-green-900/20 rounded-xl p-4 space-y-4 border border-green-700/50"
+                    className="bg-green-50 rounded-xl p-4 space-y-4 border border-green-200"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-white font-medium flex items-center gap-2">
-                        <Play className="w-4 h-4 text-green-400" />
+                      <span className="text-slate-900 font-medium flex items-center gap-2">
+                        <Play className="w-4 h-4 text-green-500" />
                         Vídeo Chat {index + 1}
                       </span>
                       <button
                         onClick={() => handleRemoveVideoChat(index)}
-                        className="p-1 text-red-400 hover:text-red-300 transition-colors"
+                        className="p-1 text-red-500 hover:text-red-600 transition-colors"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -1155,32 +1189,40 @@ export default function AdminDashboard() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {/* ID do vídeo */}
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           ID do Vídeo *
                         </label>
                         <input
                           type="text"
                           value={videoChat.id}
                           onChange={(e) =>
-                            handleVideoChatFieldChange(index, "id", e.target.value)
+                            handleVideoChatFieldChange(
+                              index,
+                              "id",
+                              e.target.value
+                            )
                           }
-                          className="w-full px-4 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="w-full px-4 py-2 bg-white border border-green-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-400/50"
                           placeholder="Ex: intro, apresentacao, promo1"
                         />
                       </div>
 
                       {/* Label do botão */}
                       <div>
-                        <label className="block text-sm font-medium text-slate-300 mb-2">
+                        <label className="block text-sm font-medium text-slate-700 mb-2">
                           Label do Botão *
                         </label>
                         <input
                           type="text"
                           value={videoChat.label}
                           onChange={(e) =>
-                            handleVideoChatFieldChange(index, "label", e.target.value)
+                            handleVideoChatFieldChange(
+                              index,
+                              "label",
+                              e.target.value
+                            )
                           }
-                          className="w-full px-4 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+                          className="w-full px-4 py-2 bg-white border border-green-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-400/50"
                           placeholder="Ex: Me Conheça, Promoção, Exclusivo"
                         />
                       </div>
@@ -1188,7 +1230,7 @@ export default function AdminDashboard() {
 
                     {/* Video URL */}
                     <div>
-                      <label className="block text-sm font-medium text-slate-300 mb-2">
+                      <label className="block text-sm font-medium text-slate-700 mb-2">
                         <Video className="w-4 h-4 inline mr-1" />
                         Arquivo de Vídeo *
                       </label>
@@ -1197,14 +1239,18 @@ export default function AdminDashboard() {
                           type="text"
                           value={videoChat.videoUrl}
                           onChange={(e) =>
-                            handleVideoChatFieldChange(index, "videoUrl", e.target.value)
+                            handleVideoChatFieldChange(
+                              index,
+                              "videoUrl",
+                              e.target.value
+                            )
                           }
-                          className="flex-1 px-4 py-2 bg-slate-600 border border-slate-500 rounded-lg text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 text-sm"
+                          className="flex-1 px-4 py-2 bg-white border border-green-200 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-green-400/50 text-sm"
                           placeholder="URL do vídeo (faça upload ao lado)"
                           readOnly
                         />
                         <label>
-                          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-500 text-white rounded-lg cursor-pointer transition-colors">
+                          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg cursor-pointer transition-colors">
                             {uploadingVideoChat ? (
                               <Loader2 className="w-4 h-4 animate-spin" />
                             ) : (
@@ -1221,7 +1267,9 @@ export default function AdminDashboard() {
                         </label>
                       </div>
                       {videoChat.videoUrl && (
-                        <p className="text-xs text-green-400 mt-1">✓ Vídeo carregado com sucesso</p>
+                        <p className="text-xs text-green-600 mt-1">
+                          ✓ Vídeo carregado com sucesso
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1230,10 +1278,10 @@ export default function AdminDashboard() {
             </div>
 
             {/* Footer do modal */}
-            <div className="sticky bottom-0 flex items-center justify-end gap-3 p-6 border-t border-slate-700 bg-slate-800 rounded-b-2xl">
+            <div className="sticky bottom-0 flex items-center justify-end gap-3 p-6 border-t border-slate-100 bg-white rounded-b-3xl">
               <button
                 onClick={() => setShowModal(false)}
-                className="px-6 py-3 text-slate-400 hover:text-white transition-colors"
+                className="px-6 py-3 text-slate-500 hover:text-slate-700 transition-colors"
               >
                 Cancelar
               </button>
@@ -1247,7 +1295,9 @@ export default function AdminDashboard() {
                 ) : (
                   <Save className="w-5 h-5" />
                 )}
-                <span>{editingModel ? "Salvar Alterações" : "Criar Modelo"}</span>
+                <span>
+                  {editingModel ? "Salvar Alterações" : "Criar Modelo"}
+                </span>
               </button>
             </div>
           </div>
@@ -1256,4 +1306,3 @@ export default function AdminDashboard() {
     </div>
   );
 }
-
