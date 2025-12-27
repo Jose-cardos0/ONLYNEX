@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // ==================== SUBSCRIPTIONS ====================
+    // Apenas o backend (Admin SDK) pode escrever
+    // Usuários podem ler apenas sua própria assinatura
+    match /subscriptions/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if false; // Apenas Cloud Functions (Admin SDK)
+    }
+    
+    // ==================== MODELOS ====================
+    // Todos os usuários autenticados podem ler
+    // Apenas admin pode escrever (via Admin Dashboard)
+    match /modelos/{modelId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Apenas Admin SDK
+    }
+    
+    // ==================== USER COLLECTIONS ====================
+    // Cada usuário pode ler/escrever sua própria coleção
+    match /userCollections/{docId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
+
