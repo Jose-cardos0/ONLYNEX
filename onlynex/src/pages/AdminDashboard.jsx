@@ -12,6 +12,7 @@ import {
   uploadVideoThumbnail,
   uploadVideoChatFile,
   uploadVideoDigitandoFile,
+  uploadCardFile,
   getEmptyModel,
 } from "../services/modelsService";
 import {
@@ -34,6 +35,7 @@ import {
   Link as LinkIcon,
   MessageCircle,
   Play,
+  Trophy,
 } from "lucide-react";
 import logo from "../assets/logo.png";
 
@@ -52,6 +54,7 @@ export default function AdminDashboard() {
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [uploadingVideoChat, setUploadingVideoChat] = useState(false);
   const [uploadingVideoDigitando, setUploadingVideoDigitando] = useState(false);
+  const [uploadingCards, setUploadingCards] = useState(false);
 
   // Verifica autenticação
   useEffect(() => {
@@ -115,6 +118,7 @@ export default function AdminDashboard() {
       videos: model.videos || [],
       videosChat: model.videosChat || [],
       videosDigitando: model.videosDigitando || [],
+      cards: model.cards || [],
       price: model.price || 0,
     });
     setShowModal(true);
@@ -372,6 +376,41 @@ export default function AdminDashboard() {
     } finally {
       setUploadingVideoDigitando(false);
     }
+  };
+
+  // ==================== CARDS (Coleção Exclusiva) ====================
+
+  // Upload de cards (fotos ou vídeos para coleção)
+  const handleCardsUpload = async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length || !formData.name) {
+      alert("Preencha o nome da modelo antes de fazer upload");
+      return;
+    }
+
+    setUploadingCards(true);
+    try {
+      const uploadPromises = files.map((file) =>
+        uploadCardFile(file, formData.name)
+      );
+      const newCards = await Promise.all(uploadPromises);
+      setFormData((prev) => ({
+        ...prev,
+        cards: [...prev.cards, ...newCards],
+      }));
+    } catch (error) {
+      alert("Erro ao fazer upload dos cards");
+    } finally {
+      setUploadingCards(false);
+    }
+  };
+
+  // Remove card
+  const handleRemoveCard = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      cards: prev.cards.filter((_, i) => i !== index),
+    }));
   };
 
   // Salva modelo
@@ -692,7 +731,7 @@ export default function AdminDashboard() {
                       setFormData((prev) => ({ ...prev, bio: e.target.value }))
                     }
                     rows={3}
-                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all resize-none"
+                    className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-400/50 focus:border-sky-400 transition-all resize-y"
                     placeholder="Descrição da modelo"
                   />
                 </div>
@@ -1274,6 +1313,91 @@ export default function AdminDashboard() {
                     </div>
                   </div>
                 ))}
+              </div>
+
+              {/* Cards - Coleção Exclusiva */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-semibold text-slate-900 flex items-center gap-2">
+                    <Trophy className="w-5 h-5 text-amber-500" />
+                    Cards - Coleção Exclusiva ({formData.cards?.length || 0})
+                  </h3>
+                  <label>
+                    <div className="flex items-center gap-2 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-xl cursor-pointer transition-colors text-sm">
+                      {uploadingCards ? (
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      ) : (
+                        <Plus className="w-4 h-4" />
+                      )}
+                      <span>Adicionar Cards</span>
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*,video/*"
+                      multiple
+                      onChange={handleCardsUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+
+                <p className="text-sm text-slate-500">
+                  Cards são enviados automaticamente no chat a cada 5 minutos. O
+                  usuário pode salvar os cards recebidos em sua coleção pessoal.
+                  Cards não salvos aparecem borrados no perfil.
+                </p>
+
+                {(formData.cards || []).length > 0 && (
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-2">
+                    {(formData.cards || []).map((card, index) => (
+                      <div
+                        key={card.id || index}
+                        className="relative group aspect-square"
+                      >
+                        {card.type === "video" ? (
+                          <div className="w-full h-full bg-slate-200 rounded-xl flex items-center justify-center relative overflow-hidden">
+                            <video
+                              src={card.url}
+                              className="w-full h-full object-cover"
+                              muted
+                            />
+                            <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+                              <Play className="w-8 h-8 text-white" />
+                            </div>
+                          </div>
+                        ) : (
+                          <img
+                            src={card.url}
+                            alt=""
+                            className="w-full h-full object-cover rounded-xl"
+                          />
+                        )}
+                        <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-black/60 rounded text-white text-xs flex items-center gap-1">
+                          {card.type === "video" ? (
+                            <Video className="w-3 h-3" />
+                          ) : (
+                            <Image className="w-3 h-3" />
+                          )}
+                        </div>
+                        <button
+                          onClick={() => handleRemoveCard(index)}
+                          className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {(formData.cards || []).length === 0 && (
+                  <div className="text-center py-8 bg-amber-50 rounded-xl border border-amber-200">
+                    <Trophy className="w-12 h-12 text-amber-300 mx-auto mb-2" />
+                    <p className="text-amber-600 text-sm">
+                      Adicione fotos ou vídeos exclusivos para a coleção
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

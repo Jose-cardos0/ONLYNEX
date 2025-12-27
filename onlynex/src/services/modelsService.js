@@ -214,6 +214,58 @@ export const uploadVideoDigitandoFile = async (file, modelName) => {
   }
 };
 
+// ==================== CARDS (Coleção Exclusiva) ====================
+
+// Upload de card (foto ou vídeo para coleção)
+export const uploadCardFile = async (file, modelName) => {
+  try {
+    const folderName = formatFolderName(modelName);
+    const fileName = `${Date.now()}_${file.name}`;
+    const isVideo = file.type.startsWith("video/");
+    const storageRef = ref(storage, `${folderName}/cards/${fileName}`);
+    
+    await uploadBytes(storageRef, file);
+    const downloadURL = await getDownloadURL(storageRef);
+    
+    return {
+      id: `card_${Date.now()}`,
+      url: downloadURL,
+      type: isVideo ? "video" : "photo",
+      createdAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error("Erro ao fazer upload do card:", error);
+    throw error;
+  }
+};
+
+// Buscar cards da modelo pelo Storage (pasta cards)
+export const getModelCards = async (modelName) => {
+  try {
+    const folderName = formatFolderName(modelName);
+    const cardsRef = ref(storage, `${folderName}/cards`);
+    const list = await listAll(cardsRef);
+    
+    const cards = await Promise.all(
+      list.items.map(async (item) => {
+        const url = await getDownloadURL(item);
+        const isVideo = item.name.match(/\.(mp4|webm|mov|avi)$/i);
+        return {
+          id: item.name,
+          url,
+          type: isVideo ? "video" : "photo",
+          name: item.name,
+        };
+      })
+    );
+    
+    return cards;
+  } catch (error) {
+    console.error("Erro ao buscar cards:", error);
+    return [];
+  }
+};
+
 // Deletar arquivo do Storage
 export const deleteFile = async (fileUrl) => {
   try {
@@ -273,6 +325,7 @@ export const getEmptyModel = () => ({
   videos: [],
   videosChat: [], // Vídeos do chat (botões): { id, label, videoUrl }
   videosDigitando: [], // Vídeos de espera/digitando: { id, videoUrl }
+  cards: [], // Cards exclusivos para coleção: { id, url, type: 'photo'|'video' }
   price: 0,
 });
 

@@ -15,9 +15,17 @@ import {
   Gift,
   Smile,
   Play,
+  Trophy,
+  Download,
+  Check,
+  Image,
 } from "lucide-react";
 import { getModelById } from "../services/modelsService";
 import { sendMessageToAI } from "../services/chatService";
+import {
+  saveCardToCollection,
+  isCardInCollection,
+} from "../services/collectionService";
 
 export default function Chat() {
   const { id } = useParams();
@@ -36,6 +44,10 @@ export default function Chat() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const videoRef = useRef(null);
+  const cardTimerRef = useRef(null);
+  const chatStartTimeRef = useRef(null);
+  const [savedCards, setSavedCards] = useState({}); // { cardId: true/false }
+  const [savingCard, setSavingCard] = useState(null); // cardId sendo salvo
 
   // Obtém um vídeo digitando aleatório
   const getRandomDigitandoVideo = (modelData) => {
@@ -43,6 +55,134 @@ export default function Chat() {
     if (videos.length === 0) return null;
     const randomIndex = Math.floor(Math.random() * videos.length);
     return videos[randomIndex].videoUrl;
+  };
+
+  // Mensagens para cards de FOTO (50 variações)
+  const photoCardMessages = [
+    "Tirei essa foto pensando em você... 📸🔥 Salva na sua coleção!",
+    "Olha o que eu tenho pra você... 😏💋 Gostou? Salva!",
+    "Essa é só pra você, amor... 🥵📸 Guarda bem!",
+    "Tava me sentindo sexy e pensei em você... 💕🔥",
+    "Quer ver mais? Salva essa primeiro... 😈📸",
+    "Exclusivo pra quem eu gosto... 💋✨ Salva!",
+    "Olha como eu tô gata hoje... 🔥😏 Pra você!",
+    "Surpresa especial só pra você, bb... 💖📸",
+    "Me conta o que achou... 😘🔥 Salva aí!",
+    "Tava com saudade de te mandar algo assim... 💋😏",
+    "Gostou do ângulo? 📸😈 Tem mais de onde veio...",
+    "Só você tá vendo isso, viu? 🤫🔥 Exclusivo!",
+    "Preparado pra isso? 😏💕 Salva na coleção!",
+    "Achei que você ia gostar... 🥵📸 Acertei?",
+    "Meu presentinho pra você... 🎁💋 Guarda!",
+    "Olha o que você me faz fazer... 😈🔥",
+    "Tô me sentindo ousada hoje... 💋📸 Gostou?",
+    "Essa foto tá quente demais... 🔥🥵 Salva!",
+    "Só pra te provocar um pouquinho... 😏💕",
+    "Adivinha quem tá pensando em você? 💋🔥",
+    "Queria que você tivesse aqui... 😘📸",
+    "Me diz se você gostou... 🥵💋 Quero saber!",
+    "Tô caprichando só pra você... 📸✨",
+    "Essa merece um lugar especial na sua coleção... 💖🔥",
+    "Aposto que você não esperava por essa... 😈📸",
+    "Tô carente, olha pra mim... 💋😏",
+    "Só você consegue me deixar assim... 🔥💕",
+    "Guarda com carinho, tá? 📸💋",
+    "Quer mais? Me diz... 😏🥵",
+    "Isso é só uma prévia... 🔥📸 Salva!",
+    "Tô me sentindo irresistível hoje... 💋✨",
+    "Você merece essa exclusividade... 😈💕",
+    "Olha o que eu fiz pra você... 📸🔥",
+    "Me senti inspirada... 💋😏 Gostou?",
+    "Essa foto tá diferente, né? 🥵📸",
+    "Só pros meus favoritos... 💕🔥 Salva!",
+    "Te provoquei? Era a intenção... 😈💋",
+    "Minha coleção pessoal pra você... 📸✨",
+    "Imagina se a gente tivesse junto agora... 🔥😏",
+    "Tô louca pra saber sua reação... 💋🥵",
+    "Guardei essa especialmente pra você... 📸💕",
+    "Não mostra pra ninguém, é só nosso... 🤫🔥",
+    "Tô me sentindo perigosa hoje... 😈💋",
+    "Olha nos meus olhos... ou não... 📸😏",
+    "Isso é só entre a gente... 💕🔥",
+    "Me senti ousada, aproveita... 🥵📸",
+    "Você me inspira a fazer essas coisas... 💋😈",
+    "Exclusividade total pra você... 🔥✨",
+    "Tô mandando antes que eu me arrependa... 📸💕",
+    "Essa é daquelas que você vai querer guardar... 😏🔥",
+  ];
+
+  // Mensagens para cards de VÍDEO (20 variações)
+  const videoCardMessages = [
+    "Gravei esse vídeo só pra você... 🎬🔥 Assiste e salva!",
+    "Olha o que eu fiz quando tava sozinha... 😏🎥 Exclusivo!",
+    "Esse vídeo tá quente demais... 🥵🎬 Salva na coleção!",
+    "Tava pensando em você quando gravei isso... 💋🎥",
+    "Preparado pra esse vídeo? 😈🎬 Não mostra pra ninguém!",
+    "Gravei umas coisinhas... 🔥🎥 Acho que você vai gostar...",
+    "Esse vídeo é bem especial... 💕🎬 Só pra você!",
+    "Olha como eu fico quando penso em você... 🥵🎥",
+    "Vídeo exclusivo chegando... 😏🎬 Assiste até o final!",
+    "Não resisti e gravei isso... 💋🔥 Salva!",
+    "Tô me sentindo ousada... olha esse vídeo... 🎥😈",
+    "Isso é só entre a gente, tá? 🤫🎬 Guarda bem!",
+    "Fiz esse vídeo especial pra você... 💕🥵",
+    "Assiste com fone de ouvido... 😏🎥 Vai entender...",
+    "Gravei pensando em você o tempo todo... 🔥🎬",
+    "Esse vídeo vai te deixar querendo mais... 💋🎥",
+    "Meu vídeo mais ousado... só pra você... 😈🔥",
+    "Não consegui me segurar... olha isso... 🎬🥵",
+    "Vídeo novo quentinho pra você... 💕🎥 Salva!",
+    "Se você gostou das fotos, espera ver isso... 🔥😏🎬",
+  ];
+
+  // Obtém mensagem aleatória baseada no tipo do card
+  const getRandomCardMessage = (cardType) => {
+    const messages =
+      cardType === "video" ? videoCardMessages : photoCardMessages;
+    const randomIndex = Math.floor(Math.random() * messages.length);
+    return messages[randomIndex];
+  };
+
+  // Obtém um card aleatório
+  const getRandomCard = (modelData) => {
+    const cards = modelData?.cards || [];
+    if (cards.length === 0) return null;
+    const randomIndex = Math.floor(Math.random() * cards.length);
+    return cards[randomIndex];
+  };
+
+  // Envia um card aleatório no chat
+  const sendRandomCard = (modelData) => {
+    const card = getRandomCard(modelData);
+    if (!card) return;
+
+    const cardMessage = {
+      id: Date.now(),
+      sender: "model",
+      type: "card", // Tipo especial para cards
+      card: card,
+      text: getRandomCardMessage(card.type),
+      time: new Date(),
+    };
+
+    setMessages((prev) => [...prev, cardMessage]);
+  };
+
+  // Salva card na coleção do usuário
+  const handleSaveCard = async (cardId) => {
+    if (!user?.email || !model?.id) return;
+
+    setSavingCard(cardId);
+    try {
+      const result = await saveCardToCollection(user.email, model.id, cardId);
+      if (result.success) {
+        setSavedCards((prev) => ({ ...prev, [cardId]: true }));
+      }
+    } catch (error) {
+      console.error("Erro ao salvar card:", error);
+    } finally {
+      setSavingCard(null);
+    }
   };
 
   // Verifica autenticação do Firebase
@@ -94,9 +234,32 @@ export default function Chat() {
           },
         ]);
       }, 1000);
+
+      // Marca o início do chat e configura timer para cards
+      chatStartTimeRef.current = Date.now();
+
+      // Timer para enviar card a cada 5 minutos (300000ms)
+      // Só começa após 5 minutos do chat aberto
+      if (modelData.cards && modelData.cards.length > 0) {
+        cardTimerRef.current = setInterval(() => {
+          const timeInChat = Date.now() - chatStartTimeRef.current;
+          // Só envia se passou pelo menos 5 minutos desde o início
+          if (timeInChat >= 300000) {
+            sendRandomCard(modelData);
+          }
+        }, 300000); // 5 minutos = 300000ms
+      }
     };
 
     loadModel();
+
+    // Cleanup: limpa o timer quando o chat fecha
+    return () => {
+      if (cardTimerRef.current) {
+        clearInterval(cardTimerRef.current);
+        cardTimerRef.current = null;
+      }
+    };
   }, [id, navigate, user, username]);
 
   // Quando um vídeo específico (botão) termina, volta para digitando
@@ -117,7 +280,7 @@ export default function Chat() {
     setCurrentVideoUrl(videoChat.videoUrl);
     setIsDigitandoMode(false);
     setActiveButtonId(videoChat.id);
-    
+
     // Reinicia o vídeo
     setTimeout(() => {
       if (videoRef.current) {
@@ -178,7 +341,7 @@ export default function Chat() {
     } catch (error) {
       console.error("Erro ao enviar mensagem:", error);
       setIsTyping(false);
-      
+
       // Mensagem de erro amigável
       const errorMessage = {
         id: Date.now() + 1,
@@ -416,15 +579,76 @@ export default function Chat() {
                   />
                 )}
                 <div>
-                  <div
-                    className={`px-4 py-3 rounded-2xl ${
-                      msg.sender === "user"
-                        ? "bg-gradient-to-r from-sky-500 to-cyan-500 text-white rounded-br-md"
-                        : "bg-white text-slate-800 rounded-bl-md shadow-sm border border-slate-100"
-                    }`}
-                  >
-                    <p className="text-sm sm:text-base">{msg.text}</p>
-                  </div>
+                  {/* Mensagem com Card */}
+                  {msg.type === "card" && msg.card ? (
+                    <div className="bg-white rounded-2xl rounded-bl-md shadow-sm border border-slate-100 overflow-hidden">
+                      {/* Preview do Card */}
+                      <div className="relative">
+                        {msg.card.type === "video" ? (
+                          <video
+                            src={msg.card.url}
+                            className="w-full max-w-xs aspect-[3/4] object-cover"
+                            controls
+                            playsInline
+                          />
+                        ) : (
+                          <img
+                            src={msg.card.url}
+                            alt=""
+                            className="w-full max-w-xs aspect-[3/4] object-cover"
+                          />
+                        )}
+                        <div className="absolute top-2 left-2 px-2 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center gap-1 text-white text-xs font-medium">
+                          <Trophy className="w-3 h-3" />
+                          Exclusivo
+                        </div>
+                      </div>
+                      {/* Texto e botão de salvar */}
+                      <div className="p-3 space-y-2">
+                        <p className="text-sm text-slate-800">{msg.text}</p>
+                        <button
+                          onClick={() => handleSaveCard(msg.card.id)}
+                          disabled={
+                            savedCards[msg.card.id] ||
+                            savingCard === msg.card.id
+                          }
+                          className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-xl font-medium text-sm transition-all ${
+                            savedCards[msg.card.id]
+                              ? "bg-green-100 text-green-600 cursor-default"
+                              : "bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white shadow-lg shadow-amber-500/25"
+                          }`}
+                        >
+                          {savingCard === msg.card.id ? (
+                            <>
+                              <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                              Salvando...
+                            </>
+                          ) : savedCards[msg.card.id] ? (
+                            <>
+                              <Check className="w-4 h-4" />
+                              Salvo na Coleção
+                            </>
+                          ) : (
+                            <>
+                              <Download className="w-4 h-4" />
+                              Salvar na Coleção
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Mensagem de texto normal */
+                    <div
+                      className={`px-4 py-3 rounded-2xl ${
+                        msg.sender === "user"
+                          ? "bg-gradient-to-r from-sky-500 to-cyan-500 text-white rounded-br-md"
+                          : "bg-white text-slate-800 rounded-bl-md shadow-sm border border-slate-100"
+                      }`}
+                    >
+                      <p className="text-sm sm:text-base">{msg.text}</p>
+                    </div>
+                  )}
                   <p
                     className={`text-xs text-slate-400 mt-1 ${
                       msg.sender === "user" ? "text-right" : "text-left ml-2"
@@ -499,22 +723,24 @@ export default function Chat() {
 
           {/* Quick responses */}
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1 scrollbar-hide">
-            {["Oi! 👋", "Você é linda! 😍", "Bom dia! ☀️", "Me conta mais..."].map(
-              (quick, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={() => setMessage(quick)}
-                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm rounded-full whitespace-nowrap transition-all"
-                >
-                  {quick}
-                </button>
-              )
-            )}
+            {[
+              "Oi! 👋",
+              "Você é linda! 😍",
+              "Bom dia! ☀️",
+              "Me conta mais...",
+            ].map((quick, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => setMessage(quick)}
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 text-sm rounded-full whitespace-nowrap transition-all"
+              >
+                {quick}
+              </button>
+            ))}
           </div>
         </form>
       </div>
     </div>
   );
 }
-

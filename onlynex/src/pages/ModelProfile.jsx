@@ -13,8 +13,10 @@ import {
   Share2,
   Lock,
   X,
+  Trophy,
 } from "lucide-react";
 import { getModelById } from "../services/modelsService";
+import { getUserCollection } from "../services/collectionService";
 
 export default function ModelProfile() {
   const { id } = useParams();
@@ -23,14 +25,18 @@ export default function ModelProfile() {
   const [activeTab, setActiveTab] = useState("photos");
   const [selectedMedia, setSelectedMedia] = useState(null);
   const [isLiked, setIsLiked] = useState(false);
+  const [user, setUser] = useState(null);
+  const [userCollection, setUserCollection] = useState([]); // IDs dos cards salvos
 
   // Verifica autenticação do Firebase
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (!currentUser) {
         navigate("/");
         return;
       }
+
+      setUser(currentUser);
 
       const loadModel = async () => {
         const modelData = await getModelById(id);
@@ -39,6 +45,12 @@ export default function ModelProfile() {
           return;
         }
         setModel(modelData);
+
+        // Carrega a coleção do usuário para esta modelo
+        if (currentUser.email) {
+          const savedCards = await getUserCollection(currentUser.email, id);
+          setUserCollection(savedCards);
+        }
       };
 
       loadModel();
@@ -57,7 +69,8 @@ export default function ModelProfile() {
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     // Extrai o ID do vídeo do YouTube
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+    const regExp =
+      /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     const videoId = match && match[2].length === 11 ? match[2] : null;
     if (videoId) {
@@ -102,9 +115,7 @@ export default function ModelProfile() {
                     : "bg-slate-100 text-slate-500 hover:bg-slate-200"
                 }`}
               >
-                <Heart
-                  className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`}
-                />
+                <Heart className={`w-5 h-5 ${isLiked ? "fill-current" : ""}`} />
               </button>
               <button className="p-2.5 bg-slate-100 text-slate-500 hover:bg-slate-200 rounded-full transition-all">
                 <Share2 className="w-5 h-5" />
@@ -198,25 +209,57 @@ export default function ModelProfile() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex gap-1">
             {[
-              { id: "photos", label: "Fotos", icon: Image, count: model.photos?.length || 0 },
-              { id: "videos", label: "Vídeos", icon: Play, count: model.videos?.length || 0 },
+              {
+                id: "photos",
+                label: "Fotos",
+                icon: Image,
+                count: model.photos?.length || 0,
+              },
+              {
+                id: "videos",
+                label: "Vídeos",
+                icon: Play,
+                count: model.videos?.length || 0,
+              },
+              {
+                id: "colecao",
+                label: "Coleção",
+                icon: Trophy,
+                count: model.cards?.length || 0,
+              },
             ].map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-4 font-medium transition-all relative ${
+                className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 sm:px-6 py-4 font-medium transition-all relative ${
                   activeTab === tab.id
-                    ? "text-sky-500"
+                    ? tab.id === "colecao"
+                      ? "text-amber-500"
+                      : "text-sky-500"
                     : "text-slate-500 hover:text-slate-700"
                 }`}
               >
                 <tab.icon className="w-5 h-5" />
-                <span>{tab.label}</span>
-                <span className="px-2 py-0.5 bg-slate-100 rounded-full text-xs">
-                  {tab.count}
+                <span className="hidden sm:inline">{tab.label}</span>
+                <span
+                  className={`px-2 py-0.5 rounded-full text-xs ${
+                    tab.id === "colecao"
+                      ? "bg-amber-100 text-amber-600"
+                      : "bg-slate-100"
+                  }`}
+                >
+                  {tab.id === "colecao"
+                    ? `${userCollection.length}/${tab.count}`
+                    : tab.count}
                 </span>
                 {activeTab === tab.id && (
-                  <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-sky-500 to-cyan-500" />
+                  <div
+                    className={`absolute bottom-0 left-0 right-0 h-0.5 ${
+                      tab.id === "colecao"
+                        ? "bg-gradient-to-r from-amber-500 to-orange-500"
+                        : "bg-gradient-to-r from-sky-500 to-cyan-500"
+                    }`}
+                  />
                 )}
               </button>
             ))}
@@ -296,6 +339,134 @@ export default function ModelProfile() {
             ))}
           </div>
         )}
+
+        {/* Coleção Grid */}
+        {activeTab === "colecao" && (
+          <div className="space-y-6">
+            {/* Info da Coleção */}
+            <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-100">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-amber-500/30">
+                  <Trophy className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-slate-900">
+                    Sua Coleção de {model.name}
+                  </h3>
+                  <p className="text-sm text-slate-600">
+                    {userCollection.length} de {model.cards?.length || 0} cards
+                    coletados
+                  </p>
+                </div>
+              </div>
+              <p className="mt-3 text-sm text-slate-500">
+                💬 Converse no chat para receber cards exclusivos e complete sua
+                coleção!
+              </p>
+            </div>
+
+            {/* Grid de Cards */}
+            {(model.cards || []).length > 0 ? (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-4">
+                {(model.cards || []).map((card, index) => {
+                  const isOwned = userCollection.includes(card.id);
+
+                  return (
+                    <div
+                      key={card.id || index}
+                      onClick={() => {
+                        if (isOwned) {
+                          setSelectedMedia({
+                            type: card.type === "video" ? "video" : "photo",
+                            src: card.url,
+                          });
+                        }
+                      }}
+                      className={`relative aspect-[3/4] rounded-xl sm:rounded-2xl overflow-hidden group ${
+                        isOwned ? "cursor-pointer" : "cursor-not-allowed"
+                      }`}
+                    >
+                      {/* Preview do Card */}
+                      {card.type === "video" ? (
+                        <video
+                          src={card.url}
+                          className={`w-full h-full object-cover ${
+                            !isOwned
+                              ? "blur-lg scale-110"
+                              : "group-hover:scale-105"
+                          } transition-transform duration-500`}
+                          muted
+                          playsInline
+                        />
+                      ) : (
+                        <img
+                          src={card.url}
+                          alt=""
+                          className={`w-full h-full object-cover ${
+                            !isOwned
+                              ? "blur-lg scale-110"
+                              : "group-hover:scale-105"
+                          } transition-transform duration-500`}
+                        />
+                      )}
+
+                      {/* Overlay para cards desbloqueados */}
+                      {isOwned && (
+                        <>
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                          {/* Badge de tipo */}
+                          <div className="absolute top-2 left-2 px-2 py-1 bg-gradient-to-r from-amber-500 to-orange-500 rounded-full flex items-center gap-1 text-white text-xs font-medium">
+                            <Trophy className="w-3 h-3" />
+                            {card.type === "video" ? (
+                              <Play className="w-3 h-3" />
+                            ) : (
+                              <Image className="w-3 h-3" />
+                            )}
+                          </div>
+                          {/* Ícone de play para vídeos */}
+                          {card.type === "video" && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <div className="w-12 h-12 bg-white/90 rounded-full flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                                <Play className="w-5 h-5 text-amber-500 fill-current ml-0.5" />
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      )}
+
+                      {/* Overlay para cards bloqueados */}
+                      {!isOwned && (
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                          <div className="text-center p-4">
+                            <div className="w-14 h-14 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center mx-auto mb-2 border border-white/20">
+                              <Lock className="w-6 h-6 text-white" />
+                            </div>
+                            <span className="text-white font-medium text-sm">
+                              Card Bloqueado
+                            </span>
+                            <p className="text-white/70 text-xs mt-1">
+                              Converse no chat!
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Trophy className="w-16 h-16 text-amber-200 mx-auto mb-4" />
+                <p className="text-slate-500 text-lg font-medium">
+                  Nenhum card disponível ainda
+                </p>
+                <p className="text-slate-400 text-sm mt-1">
+                  {model.name} ainda não adicionou cards exclusivos
+                </p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Chat Button - Fixed */}
@@ -357,4 +528,3 @@ export default function ModelProfile() {
     </div>
   );
 }
-
